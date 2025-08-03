@@ -46,8 +46,11 @@ struct ContentView: View {
                                                      y: (self.containerSize.height - self.imageSize.height) / 2)
                         self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
                         print("ZSTACK-ONAPPEAR> zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)")
-                        self.updateSettings()
                     }
+                    .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
+                        .onChange(of: settings.version) {
+                            self.updateSettings()
+                        }
                 }
             }
             .onSmartGesture( onTap: { imagePoint in print("ZSTACK-TAP> \(imagePoint) zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)") })
@@ -60,14 +63,8 @@ struct ContentView: View {
     }
 
     private func updateSettings() {
-        if (self.showSettingsView) {
-            //
-            // Note that the showSettingsView variable gets set back to false automatically
-            // by SwiftUI after the navigate-to and return-from SettingView cycle completes.
-            //
-            hideStatusBar = self.settings.hideStatusBar
-            ignoreSafeArea = self.settings.ignoreSafeArea
-        }
+        hideStatusBar = self.settings.hideStatusBar
+        ignoreSafeArea = self.settings.ignoreSafeArea
     }
 
     private func normalizePoint(_ containerPoint: CGPoint) -> CGPoint {

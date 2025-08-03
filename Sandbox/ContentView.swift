@@ -46,7 +46,6 @@ struct ContentView: View {
                                                      y: (self.containerSize.height - self.imageSize.height) / 2)
                         self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
                         print("ZSTACK-ONAPPEAR> zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)")
-                        self.updateSettings()
                     }
                     .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
                         .onChange(of: settings.version) {

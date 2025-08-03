@@ -119,13 +119,6 @@ struct ContentView: View {
 
 extension View {
     @ViewBuilder
-    public func safeArea(ignore: Bool) -> some View {
-        if (ignore) { self.ignoresSafeArea() } else { self }
-    }
-}
-
-extension View {
-    @ViewBuilder
     func toolBar(hidden: Bool, showSettingsView: Binding<Bool>) -> some View {
         if (hidden) {
             self

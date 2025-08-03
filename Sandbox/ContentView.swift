@@ -7,7 +7,6 @@ struct ContentView: View {
     @EnvironmentObject var settings: Settings
     @State private var image: CGImage? = nil
     @State private var imageSize: CGSize = .zero
-    @State private var imagePosition: CGPoint = .zero
     @State private var imageAngle: Angle = .zero
     @State private var imageSizeLarge = false
     @State private var containerSize: CGSize = .zero
@@ -34,7 +33,7 @@ struct ContentView: View {
                 containerBackground ?? Color.green // Important trickery here
                 GeometryReader { containerGeometry in
                     ZStack {
-                        if let image: CGImage = image {
+                        if let image: CGImage = self.image {
                             Image(decorative: image, scale: 1.0)
                                 .resizable()
                                 .frame(width: CGFloat(image.width), height: CGFloat(image.height))
@@ -43,7 +42,7 @@ struct ContentView: View {
                                 .onSmartGesture(
                                     normalizePoint: self.normalizePoint, ignorePoint: self.ignorePoint,
                                     onTap: { imagePoint in
-                                        print("TAP> \(imagePoint) is: \(imageSize.width)x\(imageSize.height) zg: \(containerGeometry.size) zs: \(containerSize) ssv: \(self.showSettingsView)")
+                                        print("TAP> \(imagePoint) is: \(self.imageSize.width)x\(self.imageSize.height) zg: \(containerGeometry.size) zs: \(containerSize) ssv: \(self.showSettingsView)")
                                         self.changeImage()
                                     },
                                     onSwipeLeft: { self.showSettingsView = true }
@@ -53,10 +52,8 @@ struct ContentView: View {
                     .onAppear {
                         DispatchQueue.main.async {
                             self.containerSize = containerGeometry.size
-                            self.imagePosition = CGPoint(x: (self.containerSize.width - self.imageSize.width) / 2,
-                                                         y: (self.containerSize.height - self.imageSize.height) / 2)
                             self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
-                            print("ZSTACK-ONAPPEAR> zg: \(containerGeometry.size) zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)")
+                            print("ZSTACK-ONAPPEAR> zg: \(containerGeometry.size) zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(self.imageSize.width)x\(self.imageSize.height)")
                         }
                     }
                     .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
@@ -74,7 +71,6 @@ struct ContentView: View {
     }
 
     private func updateSettings() {
-        print("UPDATE-SETTINGS> version: \(self.settings.version)")
         hideStatusBar = self.settings.hideStatusBar
         ignoreSafeArea = self.settings.ignoreSafeArea
     }

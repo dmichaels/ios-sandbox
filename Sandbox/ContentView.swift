@@ -18,9 +18,9 @@ struct ContentView: View {
     @StateObject private var orientation: OrientationObserver = OrientationObserver()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
-                containerBackground ?? Color.green // important trickery here
+                containerBackground ?? Color.green // Important trickery here
                 GeometryReader { containerGeometry in
                     ZStack {
                         if let image: CGImage = image {
@@ -38,7 +38,6 @@ struct ContentView: View {
                                     onSwipeLeft: { self.showSettingsView = true }
                                 )
                         }
-                        NavigationLink(destination: SettingsView(), isActive: $showSettingsView) { EmptyView() }.hidden()
                     }
                     .onAppear {
                         self.containerSize = containerGeometry.size
@@ -55,9 +54,9 @@ struct ContentView: View {
             }
             .onSmartGesture( onTap: { imagePoint in print("ZSTACK-TAP> \(imagePoint) zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)") })
             .safeArea(ignore: ignoreSafeArea)
-            .statusBar(hidden: hideStatusBar)
             .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
         }
+        .statusBar(hidden: hideStatusBar) // Needs to be here on NavigationStack to take unlike .safeArea and .toolBar
         .onAppear { self.orientation.register(self.updateOrientation) }
         .onDisappear { self.orientation.deregister() }
     }
@@ -117,21 +116,6 @@ struct ContentView: View {
 extension View {
     @ViewBuilder
     func toolBar(hidden: Bool, showSettingsView: Binding<Bool>) -> some View {
-        if (hidden) {
-            self
-        } else {
-            self.toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Home").font(.headline)
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showSettingsView.wrappedValue = true
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                }
-            }
-        }
+        if (hidden) { self } else { self.toolbar { ToolbarView(showSettingsView: showSettingsView) } }
     }
 }

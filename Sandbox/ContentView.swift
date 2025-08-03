@@ -63,8 +63,8 @@ struct ContentView: View {
     private func updateSettings() {
         if (self.showSettingsView) {
             //
-            // Note that showSettingsView gets set back to false automatically
-            // by SwiftUI after the SettingView show/return cycle completes.
+            // Note that the showSettingsView variable gets set back to false automatically
+            // by SwiftUI after the navigate-to and return-from SettingView cycle completes.
             //
             hideStatusBar = self.settings.hideStatusBar
             ignoreSafeArea = self.settings.ignoreSafeArea

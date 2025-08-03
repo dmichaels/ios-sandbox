@@ -18,6 +18,17 @@ struct ContentView: View {
     @StateObject private var orientation: OrientationObserver = OrientationObserver()
 
     var body: some View {
+        //
+        // A previous/alternate way of doing this, rather than using NavigationStack, is to
+        // use NavigationView and then NavigationLink at the end of the inner ZStack like so:
+        //
+        //   NavigationLink(destination: SettingsView(), isActive: $showSettingsView){EmptyView()}.hidden()
+        //
+        // But this is deprecated; ChatGPT suggested using NavigationStack with .navigationDestination
+        // on the inner ZStack; but this results in containerGeometry not getting set yet in .onAppear
+        // on the inner ZStack, unless, as suggested by ChatGPT, we wrap the contents of teh .onAppear
+        // in DispatchQueue.main.async, which it (ChatGPT) assures is me is reasonable and not weird.
+        //
         NavigationStack {
             ZStack {
                 containerBackground ?? Color.green // Important trickery here
@@ -40,11 +51,13 @@ struct ContentView: View {
                         }
                     }
                     .onAppear {
-                        self.containerSize = containerGeometry.size
-                        self.imagePosition = CGPoint(x: (self.containerSize.width - self.imageSize.width) / 2,
-                                                     y: (self.containerSize.height - self.imageSize.height) / 2)
-                        self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
-                        print("ZSTACK-ONAPPEAR> zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)")
+                        DispatchQueue.main.async {
+                            self.containerSize = containerGeometry.size
+                            self.imagePosition = CGPoint(x: (self.containerSize.width - self.imageSize.width) / 2,
+                                                         y: (self.containerSize.height - self.imageSize.height) / 2)
+                            self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
+                            print("ZSTACK-ONAPPEAR> zg: \(containerGeometry.size) zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)")
+                        }
                     }
                     .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
                         .onChange(of: settings.version) {
@@ -52,7 +65,7 @@ struct ContentView: View {
                         }
                 }
             }
-            .onSmartGesture( onTap: { imagePoint in print("ZSTACK-TAP> \(imagePoint) zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)") })
+            .onSmartGesture(onTap:{imagePoint in print("ZSTACK-TAP> \(imagePoint) zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)")})
             .safeArea(ignore: ignoreSafeArea)
             .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
         }
@@ -62,6 +75,7 @@ struct ContentView: View {
     }
 
     private func updateSettings() {
+        print("UPDATE-SETTINGS> version: \(settings.version)")
         hideStatusBar = self.settings.hideStatusBar
         ignoreSafeArea = self.settings.ignoreSafeArea
     }

@@ -1,8 +1,7 @@
-
-// Example mostly from ChatGPT relevant to simplifying ios-lifegame 2027-07-31 ...
-
 import SwiftUI
 
+// Example (with help from ChatGPT) relevant to simplifying ios-lifegame setup 2027-07-31 ...
+//
 struct ContentView: View {
 
     @EnvironmentObject var settings: Settings
@@ -21,7 +20,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                (containerBackground ?? Color.green) // important trickery here
+                containerBackground ?? Color.green // important trickery here
                 GeometryReader { containerGeometry in
                     ZStack {
                         if let image: CGImage = image {
@@ -122,23 +121,6 @@ extension View {
     @ViewBuilder
     public func safeArea(ignore: Bool) -> some View {
         if (ignore) { self.ignoresSafeArea() } else { self }
-    }
-}
-
-class Settings: ObservableObject {
-    @Published var ignoreSafeArea: Bool = false
-    @Published var hideStatusBar: Bool = false
-}
-
-struct SettingsView: View {
-    @EnvironmentObject private var settings: Settings
-    var body: some View {
-        Form {
-            Text("Settings ...")
-            Toggle("Ignore Safe Area", isOn: $settings.ignoreSafeArea)
-            Toggle("Hide Status Bar", isOn: $settings.hideStatusBar)
-        }
-        .navigationTitle("Settings")
     }
 }
 

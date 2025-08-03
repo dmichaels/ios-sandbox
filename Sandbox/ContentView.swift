@@ -60,7 +60,7 @@ struct ContentView: View {
                         }
                     }
                     .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
-                        .onChange(of: settings.version) {
+                        .onChange(of: self.settings.version) {
                             self.updateSettings()
                         }
                 }
@@ -74,7 +74,7 @@ struct ContentView: View {
     }
 
     private func updateSettings() {
-        print("UPDATE-SETTINGS> version: \(settings.version)")
+        print("UPDATE-SETTINGS> version: \(self.settings.version)")
         hideStatusBar = self.settings.hideStatusBar
         ignoreSafeArea = self.settings.ignoreSafeArea
     }

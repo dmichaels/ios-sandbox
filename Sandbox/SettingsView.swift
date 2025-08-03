@@ -9,5 +9,6 @@ public struct SettingsView: View {
             Toggle("Hide Status Bar", isOn: $settings.hideStatusBar)
         }
         .navigationTitle("Settings")
+        .onDisappear { settings.version += 1 }
     }
 }

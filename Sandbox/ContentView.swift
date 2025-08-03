@@ -65,7 +65,6 @@ struct ContentView: View {
                         }
                 }
             }
-            .onSmartGesture(onTap:{imagePoint in print("ZSTACK-TAP> \(imagePoint) zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(imageSize.width)x\(imageSize.height)")})
             .safeArea(ignore: ignoreSafeArea)
             .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
         }

@@ -77,7 +77,6 @@ public class OrientationObserver: ObservableObject
         case .portrait:
             x = screenPoint.x - view.origin.x
             y = screenPoint.y - view.origin.y
-            print("NP> orientation: PORTRAIT \(self.current) screen-point: \(screenPoint) view: \(view) -> \(x),\(y)")
         case .portraitUpsideDown:
             if (self.ipad) {
                 x = CGFloat(view.size.width) - 1 - (screenPoint.x - view.origin.x)
@@ -91,19 +90,15 @@ public class OrientationObserver: ObservableObject
                 x = screenPoint.x - view.origin.x
                 y = screenPoint.y - view.origin.y
             }
-            print("NP> orientation: UPSIDE-DOWN \(self.current) screen-point: \(screenPoint) view: \(view) -> \(x),\(y)")
         case .landscapeRight:
             x = screenPoint.y - view.origin.x
             y = CGFloat(view.size.height) - 1 - (screenPoint.x - view.origin.y)
-            print("NP> orientation: LANDSCAPE-RIGHT \(self.current) screen-point: \(screenPoint) view: \(view) -> \(x),\(y)")
         case .landscapeLeft:
             x = CGFloat(view.size.width) - 1 - (screenPoint.y - view.origin.x)
             y = screenPoint.x - view.origin.y
-            print("NP> orientation: LANDSCAPE-LEFT \(self.current) screen-point: \(screenPoint) view: \(view) -> \(x),\(y)")
         default:
             x = screenPoint.x - view.origin.x
             y = screenPoint.y - view.origin.y
-            print("NP> orientation: LANDSCAPE-DEFAULT \(self.current) screen-point: \(screenPoint) view: \(view) -> \(x),\(y)")
         }
         return CGPoint(x: x, y: y)
     }

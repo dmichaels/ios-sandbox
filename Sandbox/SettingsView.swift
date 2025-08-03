@@ -16,10 +16,8 @@ public struct SettingsView: View {
         }
         .navigationTitle("Settings")
         .onDisappear {
-            print("SettingsView.onDisappear> version: \(settings.version) anotherSettingsView: \(anotherSettingsView)")
-            if (!anotherSettingsView) {
-                print("SettingsView.onDisappear> UPDATE version: \(settings.version) anotherSettingsView: \(anotherSettingsView)")
-                settings.version += 1
+            if (!self.anotherSettingsView) {
+                self.settings.version += 1
             }
         }
     }

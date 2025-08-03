@@ -8,8 +8,7 @@ struct ToolbarView: ToolbarContent {
         }
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
-                showSettingsView = true
-                print("BUTTON!")
+                self.showSettingsView = true
             } label: {
                 Image(systemName: "gearshape")
             }

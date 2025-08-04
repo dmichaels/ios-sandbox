@@ -18,18 +18,6 @@ struct ContentView: View {
     @StateObject private var orientation: OrientationObserver = OrientationObserver()
 
     internal var body: some View {
-        //
-        // A previous/alternate way of doing this, rather than using NavigationStack, is to
-        // use NavigationView and then NavigationLink at the end of the inner ZStack like so:
-        //
-        //   NavigationLink(destination: SettingsView(), isActive: $showSettingsView){EmptyView()}.hidden()
-        //
-        // But this is deprecated; ChatGPT suggested using NavigationStack with .navigationDestination
-        // on the inner ZStack; but this results in containerGeometry not getting set yet in .onAppear
-        // on the inner ZStack, unless, as suggested by ChatGPT, we wrap the contents of teh .onAppear
-        // in DispatchQueue.main.async, which it (ChatGPT) assures is me is reasonable and not weird.
-        // And, we have to catch .onChange too.
-        //
         NavigationStack {
             GeometryReader { containerGeometry in ZStack {
                 containerBackground ?? Color.green // Important trickery here
@@ -64,10 +52,6 @@ struct ContentView: View {
             .safeArea(ignore: ignoreSafeArea)
             .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
         }
-        //
-        // For some reason the .statusBar qualifier eeds to be here on
-        // NavigationStack rather than to take unlike .safeArea and .toolBar above.
-        //
         .statusBar(hidden: hideStatusBar)
         .onAppear { self.orientation.register(self.updateOrientation) }
         .onDisappear { self.orientation.deregister() }

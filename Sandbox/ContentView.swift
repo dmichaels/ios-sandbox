@@ -15,8 +15,8 @@ struct ContentView: View {
     @State private var containerSize: CGSize = .zero
     @State private var containerBackground: Color? = Color.yellow
     @State private var showSettingsView: Bool = false
-    @State private var hideStatusBar: Bool = false
-    @State private var ignoreSafeArea: Bool = false
+    @State private var hideStatusBar: Bool = Settings.Defaults.hideStatusBar
+    @State private var ignoreSafeArea: Bool = Settings.Defaults.ignoreSafeArea
     @StateObject private var orientation: OrientationObserver = OrientationObserver()
 
     var body: some View {
@@ -30,6 +30,7 @@ struct ContentView: View {
         // on the inner ZStack; but this results in containerGeometry not getting set yet in .onAppear
         // on the inner ZStack, unless, as suggested by ChatGPT, we wrap the contents of teh .onAppear
         // in DispatchQueue.main.async, which it (ChatGPT) assures is me is reasonable and not weird.
+        // And, we have to catch .onChange too.
         //
         NavigationStack {
             ZStack {
@@ -43,10 +44,11 @@ struct ContentView: View {
                                 .position(x: containerGeometry.size.width / 2, y: containerGeometry.size.height / 2)
                                 .rotationEffect(self.imageAngle)
                                 .onSmartGesture(
-                                    normalizePoint: self.normalizePoint, ignorePoint: self.ignorePoint,
+                                    normalizePoint: self.normalizePoint,
+                                    ignorePoint: self.ignorePoint,
                                     onTap: { imagePoint in
-                                        print("TAP> \(imagePoint) is: \(self.imageSize.width)x\(self.imageSize.height) zg: \(containerGeometry.size) zs: \(containerSize) ssv: \(self.showSettingsView)")
-                                        self.changeImage()
+                                        print("TAP> \(imagePoint.x),\(imagePoint.y) is: \(self.imageSize.width)x\(self.imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
+                                        self.updateImage()
                                     },
                                     onSwipeLeft: { self.showSettingsView = true }
                                 )
@@ -55,18 +57,36 @@ struct ContentView: View {
                     .onAppear {
                         DispatchQueue.main.async {
                             self.containerSize = containerGeometry.size
-                            self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
-                            print("ZSTACK-ONAPPEAR> zg: \(containerGeometry.size) zs: \(self.containerSize.width)x\(self.containerSize.height) is: \(self.imageSize.width)x\(self.imageSize.height)")
+                            self.initializeImage()
+                            print("ZSTACK-APPEAR> is: \(imageSize.width)x\(imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
+                        }
+                    }
+                    .onChange(of: containerGeometry.size) {
+                        print("ZSTACK-CHANGE> is: \(imageSize.width)x\(imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
+                        if (self.containerSize != containerGeometry.size) {
+                            self.containerSize = containerGeometry.size
+                            self.initializeImage()
+                            print("ZSTACK-CHANGED> is: \(imageSize.width)x\(imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
                         }
                     }
                     .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
                         .onChange(of: self.settings.version) {
                             self.updateSettings()
                         }
+                    .onSmartGesture(
+                        onTap: { value in
+                            print("ZSTACK-TAP> \(value.x),\(value.y) is: \(imageSize.width)x\(imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
+                        }
+                    )
                 }
             }
             .safeArea(ignore: ignoreSafeArea)
             .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
+            .onSmartGesture(
+                onTap: { value in
+                    print("OUTER-ZSTACK-TAP> \(value.x),\(value.y) is: \(imageSize.width)x\(imageSize.height) cs: \(containerSize.width)x\(containerSize.height)")
+                }
+            )
         }
         .statusBar(hidden: hideStatusBar) // Needs to be here on NavigationStack to take unlike .safeArea and .toolBar
         .onAppear { self.orientation.register(self.updateOrientation) }
@@ -83,10 +103,13 @@ struct ContentView: View {
             x: (self.containerSize.width - self.imageSize.width) / 2,
             y: (self.containerSize.height - self.imageSize.height) / 2
         )
+        print("NORMALIZE-POINT> \(containerPoint) io: \(imageOrigin.x),\(imageOrigin.y) is: \(imageSize.width)x\(imageSize.height) cs: \(self.containerSize.width)x\(self.containerSize.height)")
         return CGPoint(x: containerPoint.x - imageOrigin.x, y: containerPoint.y - imageOrigin.y)
     }
 
     private func ignorePoint(_ point: CGPoint) -> Bool {
+        let ignore: Bool = (point.x < 0) || (point.y < 0) || (point.x >= self.imageSize.width) || (point.y >= self.imageSize.height)
+        print("IGNORE-POINT> \(point) -> \((point.x < 0) || (point.y < 0) || (point.x >= self.imageSize.width) || (point.y >= self.imageSize.height)) is: \(imageSize.width)x\(imageSize.height) cs: \(self.containerSize.width)x\(self.containerSize.height)")
         return (point.x < 0) || (point.y < 0) || (point.x >= self.imageSize.width) || (point.y >= self.imageSize.height)
     }
 
@@ -98,10 +121,14 @@ struct ContentView: View {
         self.rotateImage()
     }
 
-    private func changeImage() {
-        self.imageSizeLarge.toggle()
+    private func initializeImage() {
         self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
         self.imageSize = CGSize(width: self.image!.width, height: self.image!.height)
+    }
+
+    private func updateImage() {
+        self.imageSizeLarge.toggle()
+        self.initializeImage()
     }
 
     private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage? {
@@ -118,10 +145,8 @@ struct ContentView: View {
         context.scaleBy(x: 1.0, y: -1.0)
         context.setFillColor(UIColor.blue.cgColor)
         context.fill(CGRect(x: width / 2 - 10, y: 50, width: 20, height: 30))
-        let image: CGImage = context.makeImage()!
-        self.imageSize = CGSize(width: image.width, height: image.height)
-        print("CREATE-IMAGE> large: \(large) size: \(self.imageSize.width)x\(self.imageSize.height)")
-        return image
+        print("CREATE-IMAGE> large: \(large) size: \(width)x\(height)")
+        return context.makeImage()
     }
 }
 

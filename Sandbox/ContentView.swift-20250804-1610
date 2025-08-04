@@ -27,38 +27,42 @@ struct ContentView: View {
         //   NavigationLink(destination: SettingsView(), isActive: $showSettingsView){EmptyView()}.hidden()
         //
         // But this is deprecated; ChatGPT suggested using NavigationStack with .navigationDestination
-        // on the inner ZStack; but this results in containerGeometry not getting set yet in .onAppear
+        // on the inner ZStack; but this results in geometryInner not getting set yet in .onAppear
         // on the inner ZStack, unless, as suggested by ChatGPT, we wrap the contents of teh .onAppear
         // in DispatchQueue.main.async, which it (ChatGPT) assures is me is reasonable and not weird.
         // And, we have to catch .onChange too.
         //
         NavigationStack {
-            GeometryReader { containerGeometry in ZStack { // Could also be VStack (?)
+            GeometryReader { _ in ZStack {
                 containerBackground ?? Color.green // Important trickery here
+                GeometryReader { geometryInner in ZStack { // Could also be VStack (?)
                     Image(decorative: self.image, scale: 1.0)
                         .resizable()
                         .frame(width: CGFloat(image.width), height: CGFloat(image.height))
-                        .position(x: containerGeometry.size.width / 2, y: containerGeometry.size.height / 2)
+                        .position(x: geometryInner.size.width / 2, y: geometryInner.size.height / 2)
                         .rotationEffect(self.imageAngle)
+                        .contentShape(Rectangle())
                         .onSmartGesture(
                             normalizePoint: self.normalizePoint,
                             ignorePoint: self.ignorePoint,
-                            onTap: { imagePoint in print("TAP> \(imagePoint)") ; self.updateImage(toggle: true) },
-                            onZoom: { zoomFactor in self.updateImage(zoom: zoomFactor) },
+                            onTap: { imagePoint in
+                                print("TAP> \(imagePoint)")
+                                self.updateImage(toggle: true)
+                            },
                             onSwipeLeft: { self.showSettingsView = true }
                         )
                 }
                 .onAppear {
-                    if (self.containerSize != containerGeometry.size) {
-                        print("ZSTACK-APPEAR> gs: \(containerGeometry.size) cs: \(self.containerSize) is: \(self.image.width)x\(self.image.height)")
-                        self.containerSize = containerGeometry.size
+                    if (self.containerSize != geometryInner.size) {
+                        print("ZSTACK-APPEAR> gs: \(geometryInner.size) cs: \(self.containerSize) is: \(self.image.width)x\(self.image.height)")
+                        self.containerSize = geometryInner.size
                         self.updateImage()
                     }
                 }
-                .onChange(of: containerGeometry.size) {
-                    if (self.containerSize != containerGeometry.size) {
-                        print("ZSTACK-CHANGE> gs: \(containerGeometry.size) cs: \(self.containerSize) is: \(self.image.width)x\(self.image.height)")
-                        self.containerSize = containerGeometry.size
+                .onChange(of: geometryInner.size) {
+                    if (self.containerSize != geometryInner.size) {
+                        print("ZSTACK-CHANGE> gs: \(geometryInner.size) cs: \(self.containerSize) is: \(self.image.width)x\(self.image.height)")
+                        self.containerSize = geometryInner.size
                         self.updateImage()
                     }
                 }
@@ -66,10 +70,10 @@ struct ContentView: View {
                     .onChange(of: self.settings.version) {
                         self.updateSettings()
                     }
-            }
+            }}
             .safeArea(ignore: ignoreSafeArea)
             .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
-        }
+        }}
         .statusBar(hidden: hideStatusBar) // Needs to be here on NavigationStack to take unlike .safeArea and .toolBar
         .onAppear { self.orientation.register(self.updateOrientation) }
         .onDisappear { self.orientation.deregister() }
@@ -80,9 +84,9 @@ struct ContentView: View {
         ignoreSafeArea = self.settings.ignoreSafeArea
     }
 
-    private func updateImage(toggle: Bool = false, zoom: CGFloat? = nil) {
+    private func updateImage(toggle: Bool = false) {
         if (toggle) { self.imageSizeLarge.toggle() }
-        self.image = self.imageView.update(maxSize: self.containerSize, large: self.imageSizeLarge, zoom: zoom)
+        self.image = self.imageView.update(maxSize: self.containerSize, large: self.imageSizeLarge)
     }
 
     private func rotateImage() {
@@ -98,9 +102,9 @@ struct ContentView: View {
                        y: point.y - ((self.containerSize.height - CGFloat(self.image.height)) / 2))
     }
 
-    private func ignorePoint(_ normalizedPoint: CGPoint) -> Bool {
-        return (normalizedPoint.x < 0) || (normalizedPoint.x >= CGFloat(self.image.width))
-            || (normalizedPoint.y < 0) || (normalizedPoint.y >= CGFloat(self.image.height))
+    private func ignorePoint(_ point: CGPoint) -> Bool {
+        return (point.x < 0) || (point.x >= CGFloat(self.image.width))
+            || (point.y < 0) || (point.y >= CGFloat(self.image.height))
     }
 }
 

@@ -34,7 +34,6 @@ public class ImageView
         context.scaleBy(x: 1.0, y: -1.0)
         context.setFillColor(UIColor.blue.cgColor)
         context.fill(CGRect(x: width / 2 - 10, y: 50, width: 20, height: 30))
-        print("CREATE-IMAGE: \(width)x\(height)")
         return context.makeImage()!
     }
 }

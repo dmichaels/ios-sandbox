@@ -1,25 +1,22 @@
 import SwiftUI
 
-// TODO: still problem going to ignore safe area then back again to not - wrong image size ...
-// try with old navigation scheme again in another branch ...
-
 // Example (with help from ChatGPT) relevant to simplifying ios-lifegame setup 2027-07-31 ...
 //
 struct ContentView: View {
 
-    @EnvironmentObject var settings: Settings
-    @State private var image: CGImage = DummyImage.instance
-    @State private var imageView: ImageView = ImageView()
-    @State private var imageAngle: Angle = .zero
-    @State private var imageSizeLarge = false
-    @State private var containerSize: CGSize = .zero
-    @State private var containerBackground: Color? = Color.yellow
-    @State private var showSettingsView: Bool = false
-    @State private var hideStatusBar: Bool = Settings.Defaults.hideStatusBar
-    @State private var ignoreSafeArea: Bool = Settings.Defaults.ignoreSafeArea
+    @EnvironmentObject   var settings: Settings
+    @State private       var image: CGImage = DummyImage.instance
+    @State private       var imageView: ImageView = ImageView()
+    @State private       var imageAngle: Angle = .zero
+    @State private       var imageSizeLarge = false
+    @State private       var containerSize: CGSize = .zero
+    @State private       var containerBackground: Color? = Color.yellow
+    @State private       var showSettingsView: Bool = false
+    @State private       var hideStatusBar: Bool = Settings.Defaults.hideStatusBar
+    @State private       var ignoreSafeArea: Bool = Settings.Defaults.ignoreSafeArea
     @StateObject private var orientation: OrientationObserver = OrientationObserver()
 
-    var body: some View {
+    internal var body: some View {
         //
         // A previous/alternate way of doing this, rather than using NavigationStack, is to
         // use NavigationView and then NavigationLink at the end of the inner ZStack like so:
@@ -33,7 +30,7 @@ struct ContentView: View {
         // And, we have to catch .onChange too.
         //
         NavigationStack {
-            GeometryReader { containerGeometry in ZStack { // Could also be VStack (?)
+            GeometryReader { containerGeometry in ZStack {
                 containerBackground ?? Color.green // Important trickery here
                     Image(decorative: self.image, scale: 1.0)
                         .resizable()
@@ -43,34 +40,34 @@ struct ContentView: View {
                         .onSmartGesture(
                             normalizePoint: self.normalizePoint,
                             ignorePoint: self.ignorePoint,
-                            onTap: { imagePoint in print("TAP> \(imagePoint)") ; self.updateImage(toggle: true) },
+                            onTap: { imagePoint in self.updateImage(toggle: true) },
                             onZoom: { zoomFactor in self.updateImage(zoom: zoomFactor) },
                             onSwipeLeft: { self.showSettingsView = true }
                         )
                 }
                 .onAppear {
                     if (self.containerSize != containerGeometry.size) {
-                        print("ZSTACK-APPEAR> gs: \(containerGeometry.size) cs: \(self.containerSize) is: \(self.image.width)x\(self.image.height)")
                         self.containerSize = containerGeometry.size
                         self.updateImage()
                     }
                 }
                 .onChange(of: containerGeometry.size) {
                     if (self.containerSize != containerGeometry.size) {
-                        print("ZSTACK-CHANGE> gs: \(containerGeometry.size) cs: \(self.containerSize) is: \(self.image.width)x\(self.image.height)")
                         self.containerSize = containerGeometry.size
                         self.updateImage()
                     }
                 }
                 .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
-                    .onChange(of: self.settings.version) {
-                        self.updateSettings()
-                    }
+                    .onChange(of: self.settings.version) { self.updateSettings() }
             }
             .safeArea(ignore: ignoreSafeArea)
             .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
         }
-        .statusBar(hidden: hideStatusBar) // Needs to be here on NavigationStack to take unlike .safeArea and .toolBar
+        //
+        // For some reason the .statusBar qualifier eeds to be here on
+        // NavigationStack rather than to take unlike .safeArea and .toolBar above.
+        //
+        .statusBar(hidden: hideStatusBar)
         .onAppear { self.orientation.register(self.updateOrientation) }
         .onDisappear { self.orientation.deregister() }
     }
@@ -106,7 +103,7 @@ struct ContentView: View {
 
 extension View {
     @ViewBuilder
-    func toolBar(hidden: Bool, showSettingsView: Binding<Bool>) -> some View {
+    internal func toolBar(hidden: Bool, showSettingsView: Binding<Bool>) -> some View {
         if (hidden) { self } else { self.toolbar { ToolbarView(showSettingsView: showSettingsView) } }
     }
 }

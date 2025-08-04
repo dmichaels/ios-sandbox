@@ -8,11 +8,12 @@ import SwiftUI
 struct ContentView: View {
 
     @EnvironmentObject var settings: Settings
-    @State private var image: CGImage? = nil
+    @State private var image: CGImage = DummyImage.instance
     @State private var imageSize: CGSize = .zero
     @State private var imageAngle: Angle = .zero
     @State private var imageSizeLarge = false
     @State private var containerSize: CGSize = .zero
+    @State private var containerOffset: CGPoint = .zero
     @State private var containerBackground: Color? = Color.yellow
     @State private var showSettingsView: Bool = false
     @State private var hideStatusBar: Bool = Settings.Defaults.hideStatusBar
@@ -27,67 +28,78 @@ struct ContentView: View {
         //   NavigationLink(destination: SettingsView(), isActive: $showSettingsView){EmptyView()}.hidden()
         //
         // But this is deprecated; ChatGPT suggested using NavigationStack with .navigationDestination
-        // on the inner ZStack; but this results in containerGeometry not getting set yet in .onAppear
+        // on the inner ZStack; but this results in geometryInner not getting set yet in .onAppear
         // on the inner ZStack, unless, as suggested by ChatGPT, we wrap the contents of teh .onAppear
         // in DispatchQueue.main.async, which it (ChatGPT) assures is me is reasonable and not weird.
         // And, we have to catch .onChange too.
         //
         NavigationStack {
-            ZStack {
+            GeometryReader { geometryOuter in ZStack {
                 containerBackground ?? Color.green // Important trickery here
-                GeometryReader { containerGeometry in
-                    ZStack {
-                        if let image: CGImage = self.image {
-                            Image(decorative: image, scale: 1.0)
-                                .resizable()
-                                .frame(width: CGFloat(image.width), height: CGFloat(image.height))
-                                .position(x: containerGeometry.size.width / 2, y: containerGeometry.size.height / 2)
-                                .rotationEffect(self.imageAngle)
-                                .onSmartGesture(
-                                    normalizePoint: self.normalizePoint,
-                                    ignorePoint: self.ignorePoint,
-                                    onTap: { imagePoint in
-                                        print("TAP> \(imagePoint.x),\(imagePoint.y) is: \(self.imageSize.width)x\(self.imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
-                                        self.updateImage()
-                                    },
-                                    onSwipeLeft: { self.showSettingsView = true }
-                                )
-                        }
-                    }
-                    .onAppear {
-                        DispatchQueue.main.async {
-                            self.containerSize = containerGeometry.size
-                            self.initializeImage()
-                            print("ZSTACK-APPEAR> is: \(imageSize.width)x\(imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
-                        }
-                    }
-                    .onChange(of: containerGeometry.size) {
-                        print("ZSTACK-CHANGE> is: \(imageSize.width)x\(imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
-                        if (self.containerSize != containerGeometry.size) {
-                            self.containerSize = containerGeometry.size
-                            self.initializeImage()
-                            print("ZSTACK-CHANGED> is: \(imageSize.width)x\(imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
-                        }
-                    }
-                    .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
-                        .onChange(of: self.settings.version) {
-                            self.updateSettings()
-                        }
-                    .onSmartGesture(
-                        onTap: { value in
-                            print("ZSTACK-TAP> \(value.x),\(value.y) is: \(imageSize.width)x\(imageSize.height) cg: \(containerGeometry.size.width)x\(containerGeometry.size.height) cs: \(containerSize.width)x\(containerSize.height)")
-                        }
-                    )
+                GeometryReader { geometryInner in ZStack { // Could also be VStack (?)
+                    Image(decorative: image, scale: 1.0)
+                        .resizable()
+                        .frame(width: CGFloat(image.width), height: CGFloat(image.height))
+                        .position(x: geometryInner.size.width / 2, y: geometryInner.size.height / 2)
+                        .rotationEffect(self.imageAngle)
+                        .onSmartGesture(
+                            normalizePoint: self.normalizePoint,
+                            ignorePoint: self.ignorePoint,
+                            onTap: { imagePoint in
+                                print("TAP> \(imagePoint.x),\(imagePoint.y) is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height)")
+                                self.updateImage()
+                            },
+                            onSwipeLeft: { self.showSettingsView = true }
+                        )
+                        .onAppear {print("IMAGE-APPEAR: is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height)") }
                 }
+                .onAppear {
+                    // DispatchQueue.main.async {
+                    let gframe: CGRect = geometryOuter.frame(in: .global)
+                    self.containerSize = geometryInner.size
+                    self.initializeImage()
+                    print("ZSTACK-APPEAR> is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height) gframe: \(gframe)")
+                    // }
+                }
+                .onChange(of: geometryInner.size) {
+                    let gframe: CGRect = geometryOuter.frame(in: .global)
+                    print("ZSTACK-CHANGE> is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height) gframe: \(gframe)")
+                    if (self.containerSize != geometryInner.size) {
+                        self.containerSize = geometryInner.size
+                        self.initializeImage()
+                        print("ZSTACK-CHANGED> is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height)")
+                    }
+                }
+                .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
+                    .onChange(of: self.settings.version) {
+                        self.updateSettings()
+                    }
+                .onSmartGesture(
+                    onTap: { value in
+                        print("ZSTACK-TAP> \(value.x),\(value.y) is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height) co: \(containerOffset)")
+                    }
+                )
+            }}
+            .onAppear {
+                let gframe: CGRect = geometryOuter.frame(in: .global)
+                self.containerOffset = self.ignoreSafeArea ? gframe.origin : CGPoint(x: 0, y: 0)
+                print("OUTER-STACK-APPEAR: is: \(imageSize.width)x\(imageSize.height) og: \(geometryOuter.size.width)x\(geometryOuter.size.height) cs: \(containerSize.width)x\(containerSize.height) gframe: \(gframe)")
+            }
+            .onChange(of: geometryOuter.size) {
+                let gframe: CGRect = geometryOuter.frame(in: .global)
+                self.containerOffset = self.ignoreSafeArea ? gframe.origin : CGPoint(x: 0, y: 0)
+                print("OUTER-STACK-CHANGE: is: \(imageSize.width)x\(imageSize.height) og: \(geometryOuter.size.width)x\(geometryOuter.size.height) cs: \(containerSize.width)x\(containerSize.height) gframe: \(gframe)")
             }
             .safeArea(ignore: ignoreSafeArea)
             .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
             .onSmartGesture(
                 onTap: { value in
-                    print("OUTER-ZSTACK-TAP> \(value.x),\(value.y) is: \(imageSize.width)x\(imageSize.height) cs: \(containerSize.width)x\(containerSize.height)")
+                    // let normalizedPoint: CGPoint = CGPoint(x: value.x, y: self.ignoreSafeArea ? value.y + self.containerOffset.y : value.y)
+                    let normalizedPoint: CGPoint = CGPoint(x: value.x, y: value.y + self.containerOffset.y)
+                    print("OUTER-ZSTACK-TAP> \(value.x),\(value.y) is: \(imageSize.width)x\(imageSize.height) cs: \(containerSize.width)x\(containerSize.height) co: \(containerOffset) np: \(normalizedPoint)")
                 }
             )
-        }
+        }}
         .statusBar(hidden: hideStatusBar) // Needs to be here on NavigationStack to take unlike .safeArea and .toolBar
         .onAppear { self.orientation.register(self.updateOrientation) }
         .onDisappear { self.orientation.deregister() }
@@ -103,7 +115,7 @@ struct ContentView: View {
             x: (self.containerSize.width - self.imageSize.width) / 2,
             y: (self.containerSize.height - self.imageSize.height) / 2
         )
-        print("NORMALIZE-POINT> \(containerPoint) io: \(imageOrigin.x),\(imageOrigin.y) is: \(imageSize.width)x\(imageSize.height) cs: \(self.containerSize.width)x\(self.containerSize.height)")
+        print("NORMALIZE-POINT> \(containerPoint) io: \(imageOrigin.x),\(imageOrigin.y) is: \(imageSize.width)x\(imageSize.height) cs: \(containerSize.width)x\(containerSize.height)")
         return CGPoint(x: containerPoint.x - imageOrigin.x, y: containerPoint.y - imageOrigin.y)
     }
 
@@ -123,7 +135,8 @@ struct ContentView: View {
 
     private func initializeImage() {
         self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
-        self.imageSize = CGSize(width: self.image!.width, height: self.image!.height)
+        // self.imageSize = CGSize(width: self.image!.width, height: self.image!.height)
+        self.imageSize = CGSize(width: self.image.width, height: self.image.height)
     }
 
     private func updateImage() {
@@ -131,7 +144,7 @@ struct ContentView: View {
         self.initializeImage()
     }
 
-    private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage? {
+    private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage /*?*/ {
         let width = !large ? 200 : Int(maxSize.width)
         let height = !large ? 300 : Int(maxSize.height)
         let context = CGContext(
@@ -146,7 +159,7 @@ struct ContentView: View {
         context.setFillColor(UIColor.blue.cgColor)
         context.fill(CGRect(x: width / 2 - 10, y: 50, width: 20, height: 30))
         print("CREATE-IMAGE> large: \(large) size: \(width)x\(height)")
-        return context.makeImage()
+        return context.makeImage()!
     }
 }
 

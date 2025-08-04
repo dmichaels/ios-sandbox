@@ -9,7 +9,6 @@ struct ContentView: View {
 
     @EnvironmentObject var settings: Settings
     @State private var image: CGImage = DummyImage.instance
-    @State private var imageView: ImageView = ImageView()
     @State private var imageSize: CGSize = .zero
     @State private var imageAngle: Angle = .zero
     @State private var imageSizeLarge = false
@@ -47,19 +46,25 @@ struct ContentView: View {
                             normalizePoint: self.normalizePoint,
                             ignorePoint: self.ignorePoint,
                             onTap: { imagePoint in
+                                print("TAP> \(imagePoint.x),\(imagePoint.y) is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height)")
                                 self.updateImage(toggle: true)
                             },
                             onSwipeLeft: { self.showSettingsView = true }
                         )
+                        .onAppear {print("IMAGE-APPEAR: is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height)") }
                 }
                 .onAppear {
                     self.containerSize = geometryInner.size
                     self.updateImage()
+                    print("ZSTACK-APPEAR> is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height)")
                 }
                 .onChange(of: geometryInner.size) {
+                    print("ZSTACK-CHANGE> is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height)")
                     if (self.containerSize != geometryInner.size) {
                         self.containerSize = geometryInner.size
+                        // self.initializeImage()
                         self.updateImage()
+                        print("ZSTACK-CHANGED> is: \(imageSize.width)x\(imageSize.height) cg: \(geometryInner.size.width)x\(geometryInner.size.height) cs: \(containerSize.width)x\(containerSize.height)")
                     }
                 }
                 .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
@@ -67,6 +72,12 @@ struct ContentView: View {
                         self.updateSettings()
                     }
             }}
+            .onAppear {
+                print("OUTER-STACK-APPEAR: is: \(imageSize.width)x\(imageSize.height) og: \(geometryOuter.size.width)x\(geometryOuter.size.height) cs: \(containerSize.width)x\(containerSize.height)")
+            }
+            .onChange(of: geometryOuter.size) {
+                print("OUTER-STACK-CHANGE: is: \(imageSize.width)x\(imageSize.height) og: \(geometryOuter.size.width)x\(geometryOuter.size.height) cs: \(containerSize.width)x\(containerSize.height)")
+            }
             .safeArea(ignore: ignoreSafeArea)
             .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
         }}
@@ -81,11 +92,17 @@ struct ContentView: View {
     }
 
     private func normalizePoint(_ containerPoint: CGPoint) -> CGPoint {
-        return CGPoint(x: containerPoint.x - ((self.containerSize.width  - self.imageSize.width)  / 2),
-                       y: containerPoint.y - ((self.containerSize.height - self.imageSize.height) / 2))
+        let imageOrigin: CGPoint = CGPoint(
+            x: (self.containerSize.width - self.imageSize.width) / 2,
+            y: (self.containerSize.height - self.imageSize.height) / 2
+        )
+        print("NORMALIZE-POINT> \(containerPoint) io: \(imageOrigin.x),\(imageOrigin.y) is: \(imageSize.width)x\(imageSize.height) cs: \(containerSize.width)x\(containerSize.height)")
+        return CGPoint(x: containerPoint.x - imageOrigin.x, y: containerPoint.y - imageOrigin.y)
     }
 
     private func ignorePoint(_ point: CGPoint) -> Bool {
+        let ignore: Bool = (point.x < 0) || (point.y < 0) || (point.x >= self.imageSize.width) || (point.y >= self.imageSize.height)
+        print("IGNORE-POINT> \(point) -> \((point.x < 0) || (point.y < 0) || (point.x >= self.imageSize.width) || (point.y >= self.imageSize.height)) is: \(imageSize.width)x\(imageSize.height) cs: \(self.containerSize.width)x\(self.containerSize.height)")
         return (point.x < 0) || (point.y < 0) || (point.x >= self.imageSize.width) || (point.y >= self.imageSize.height)
     }
 
@@ -97,10 +114,40 @@ struct ContentView: View {
         self.rotateImage()
     }
 
+/*
+    private func initializeImage() {
+        self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
+        // self.imageSize = CGSize(width: self.image!.width, height: self.image!.height)
+        self.imageSize = CGSize(width: self.image.width, height: self.image.height)
+    }
+
+    private func updateImage() {
+        self.imageSizeLarge.toggle()
+        self.initializeImage()
+    }
+*/
     private func updateImage(toggle: Bool = false) {
         if (toggle) { self.imageSizeLarge.toggle() }
-        self.image = self.imageView.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
+        self.image = self.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
         self.imageSize = CGSize(width: self.image.width, height: self.image.height)
+    }
+
+    private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage /*?*/ {
+        let width = !large ? 200 : Int(maxSize.width)
+        let height = !large ? 300 : Int(maxSize.height)
+        let context = CGContext(
+            data: nil, width: width, height: height,
+            bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        )!
+        context.setFillColor(UIColor.red.cgColor)
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        context.translateBy(x: 0, y: CGFloat(height))
+        context.scaleBy(x: 1.0, y: -1.0)
+        context.setFillColor(UIColor.blue.cgColor)
+        context.fill(CGRect(x: width / 2 - 10, y: 50, width: 20, height: 30))
+        print("CREATE-IMAGE> large: \(large) size: \(width)x\(height)")
+        return context.makeImage()!
     }
 }
 

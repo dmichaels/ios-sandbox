@@ -1,6 +1,7 @@
 import SwiftUI
 
 // Example (with help from ChatGPT) relevant to simplifying ios-lifegame setup 2027-07-31 ...
+// Went through lots of iterations; this is the simplest we came up with; lots of subtleties.
 //
 struct ContentView: View {
 

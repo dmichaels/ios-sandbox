@@ -10,7 +10,6 @@ struct ContentView: View {
     @EnvironmentObject var settings: Settings
     @State private var image: CGImage = DummyImage.instance
     @State private var imageView: ImageView = ImageView()
-    @State private var imageSize: CGSize = .zero
     @State private var imageAngle: Angle = .zero
     @State private var imageSizeLarge = false
     @State private var containerSize: CGSize = .zero
@@ -34,10 +33,10 @@ struct ContentView: View {
         // And, we have to catch .onChange too.
         //
         NavigationStack {
-            GeometryReader { geometryOuter in ZStack {
+            GeometryReader { _ in ZStack {
                 containerBackground ?? Color.green // Important trickery here
                 GeometryReader { geometryInner in ZStack { // Could also be VStack (?)
-                    Image(decorative: image, scale: 1.0)
+                    Image(decorative: self.image, scale: 1.0)
                         .resizable()
                         .frame(width: CGFloat(image.width), height: CGFloat(image.height))
                         .position(x: geometryInner.size.width / 2, y: geometryInner.size.height / 2)
@@ -47,17 +46,22 @@ struct ContentView: View {
                             normalizePoint: self.normalizePoint,
                             ignorePoint: self.ignorePoint,
                             onTap: { imagePoint in
+                                print("TAP> \(imagePoint)")
                                 self.updateImage(toggle: true)
                             },
                             onSwipeLeft: { self.showSettingsView = true }
                         )
                 }
                 .onAppear {
-                    self.containerSize = geometryInner.size
-                    self.updateImage()
+                    if (self.containerSize != geometryInner.size) {
+                        print("ZSTACK-APPEAR> gs: \(geometryInner.size) cs: \(self.containerSize) is: \(self.image.width)x\(self.image.height)")
+                        self.containerSize = geometryInner.size
+                        self.updateImage()
+                    }
                 }
                 .onChange(of: geometryInner.size) {
                     if (self.containerSize != geometryInner.size) {
+                        print("ZSTACK-CHANGE> gs: \(geometryInner.size) cs: \(self.containerSize) is: \(self.image.width)x\(self.image.height)")
                         self.containerSize = geometryInner.size
                         self.updateImage()
                     }
@@ -80,13 +84,9 @@ struct ContentView: View {
         ignoreSafeArea = self.settings.ignoreSafeArea
     }
 
-    private func normalizePoint(_ containerPoint: CGPoint) -> CGPoint {
-        return CGPoint(x: containerPoint.x - ((self.containerSize.width  - self.imageSize.width)  / 2),
-                       y: containerPoint.y - ((self.containerSize.height - self.imageSize.height) / 2))
-    }
-
-    private func ignorePoint(_ point: CGPoint) -> Bool {
-        return (point.x < 0) || (point.y < 0) || (point.x >= self.imageSize.width) || (point.y >= self.imageSize.height)
+    private func updateImage(toggle: Bool = false) {
+        if (toggle) { self.imageSizeLarge.toggle() }
+        self.image = self.imageView.update(maxSize: self.containerSize, large: self.imageSizeLarge)
     }
 
     private func rotateImage() {
@@ -97,10 +97,14 @@ struct ContentView: View {
         self.rotateImage()
     }
 
-    private func updateImage(toggle: Bool = false) {
-        if (toggle) { self.imageSizeLarge.toggle() }
-        self.image = self.imageView.createImage(maxSize: self.containerSize, large: self.imageSizeLarge)
-        self.imageSize = CGSize(width: self.image.width, height: self.image.height)
+    private func normalizePoint(_ point: CGPoint) -> CGPoint {
+        return CGPoint(x: point.x - ((self.containerSize.width  - CGFloat(self.image.width))  / 2),
+                       y: point.y - ((self.containerSize.height - CGFloat(self.image.height)) / 2))
+    }
+
+    private func ignorePoint(_ point: CGPoint) -> Bool {
+        return (point.x < 0) || (point.x >= CGFloat(self.image.width))
+            || (point.y < 0) || (point.y >= CGFloat(self.image.height))
     }
 }
 

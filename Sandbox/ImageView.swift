@@ -2,13 +2,15 @@ import SwiftUI
 
 public class ImageView
 {
-    private var _width: Int = 0
-    private var _height: Int = 0
+    private var _image: CGImage = DummyImage.instance
+    public var image: CGImage { self._image }
 
-    public var width: Int { self._width }
-    public var height: Int { self._height }
+    public func update(maxSize: CGSize, large: Bool = false) -> CGImage {
+        self._image = self.createImage(maxSize: maxSize, large: large)
+        return self._image
+    }
 
-    public func createImage(maxSize: CGSize, large: Bool = false) -> CGImage /*?*/ {
+    private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage /*?*/ {
         let width = !large ? 200 : Int(maxSize.width)
         let height = !large ? 300 : Int(maxSize.height)
         let context = CGContext(
@@ -22,6 +24,7 @@ public class ImageView
         context.scaleBy(x: 1.0, y: -1.0)
         context.setFillColor(UIColor.blue.cgColor)
         context.fill(CGRect(x: width / 2 - 10, y: 50, width: 20, height: 30))
+        print("CREATE-IMAGE: \(width)x\(height)")
         return context.makeImage()!
     }
 }

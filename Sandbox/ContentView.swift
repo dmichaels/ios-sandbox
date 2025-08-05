@@ -3,11 +3,18 @@ import SwiftUI
 // Example (with help from ChatGPT) relevant to simplifying ios-lifegame setup 2027-07-31 ...
 // Went through lots of iterations; this is the simplest we came up with; lots of subtleties.
 //
-internal struct ContentView: View {
+public struct ContentView: View
+{
+    public class Settings: ObservableObject {
+        @Published public var hideStatusBar: Bool = true
+        @Published public var hideToolBar: Bool = false
+        @Published public var ignoreSafeArea: Bool = false
+        @Published public var version: Int = 0
+        public static let Defaults: Settings = Settings()
+    }
 
-    @EnvironmentObject private var settings: Settings
+    @EnvironmentObject private var settings: ContentView.Settings
                        private var imageView: ImageViewable
-
     @State             private var image: CGImage                   = DummyImage.instance
     @State             private var imageAngle: Angle                = .zero
     @State             private var imageSizeLarge                   = false
@@ -15,14 +22,15 @@ internal struct ContentView: View {
     @State             private var containerBackground: Color?      = Color.yellow
     @StateObject       private var orientation: OrientationObserver = OrientationObserver()
     @State             private var showSettingsView: Bool           = false
-    @State             private var hideStatusBar: Bool              = Settings.Defaults.hideStatusBar
-    @State             private var ignoreSafeArea: Bool             = Settings.Defaults.ignoreSafeArea
+    @State             private var hideStatusBar: Bool              = ContentView.Settings.Defaults.hideStatusBar
+    @State             private var hideToolBar: Bool                = ContentView.Settings.Defaults.hideToolBar
+    @State             private var ignoreSafeArea: Bool              = ContentView.Settings.Defaults.ignoreSafeArea
 
     internal init(_ imageView: ImageView) {
         self.imageView = imageView
     }
 
-    internal var body: some View {
+    public var body: some View {
         NavigationStack {
             GeometryReader { containerGeometry in ZStack {
                 containerBackground ?? Color.green // Important trickery here
@@ -34,28 +42,24 @@ internal struct ContentView: View {
                         .onSmartGesture(
                             normalizePoint: self.normalizePoint,
                             ignorePoint: self.ignorePoint,
-                            onTap: { imagePoint in self.updateImage(toggle: true) },
+                            onTap: { imagePoint in self.updateImage(toggle: true) ; self.imageView.onTap(imagePoint) },
                             onZoom: { zoomFactor in self.updateImage(zoom: zoomFactor) },
                             onSwipeLeft: { self.showSettingsView = true }
                         )
                 }
                 .onAppear {
-                    if (self.containerSize != containerGeometry.size) {
-                        self.containerSize = containerGeometry.size
-                        self.updateImage()
-                    }
+                    self.updateImage(geometry: containerGeometry)
                 }
                 .onChange(of: containerGeometry.size) {
-                    if (self.containerSize != containerGeometry.size) {
-                        self.containerSize = containerGeometry.size
-                        self.updateImage()
-                    }
+                    self.updateImage(geometry: containerGeometry)
+                }
+                .onChange(of: self.settings.version) {
+                    self.updateSettings()
                 }
                 .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
-                    .onChange(of: self.settings.version) { self.updateSettings() }
             }
             .safeArea(ignore: ignoreSafeArea)
-            .toolBar(hidden: ignoreSafeArea, showSettingsView: $showSettingsView)
+            .toolBar(hidden: hideToolBar || ignoreSafeArea, showSettingsView: $showSettingsView)
         }
         .statusBar(hidden: hideStatusBar)
         .onAppear { self.orientation.register(self.updateOrientation) }
@@ -64,10 +68,14 @@ internal struct ContentView: View {
 
     private func updateSettings() {
         hideStatusBar = self.settings.hideStatusBar
+        hideToolBar = self.settings.hideToolBar
         ignoreSafeArea = self.settings.ignoreSafeArea
     }
 
-    private func updateImage(toggle: Bool = false, zoom: CGFloat? = nil) {
+    private func updateImage(geometry: GeometryProxy? = nil, toggle: Bool = false, zoom: CGFloat? = nil) {
+        if let geometry: GeometryProxy = geometry, self.containerSize != geometry.size {
+            self.containerSize = geometry.size
+        }
         if (toggle) { self.imageSizeLarge.toggle() }
         self.image = self.imageView.update(maxSize: self.containerSize, large: self.imageSizeLarge, zoom: zoom)
     }

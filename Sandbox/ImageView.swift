@@ -2,7 +2,12 @@ import SwiftUI
 
 public class ImageView: ImageViewable
 {
+           private      var settings: ContentView.Settings
     public private(set) var image: CGImage = DummyImage.instance
+
+    required public init(_ settings: ContentView.Settings) {
+        self.settings = settings
+    }
 
     public func update(maxSize: CGSize, large: Bool = false, zoom: CGFloat? = nil) -> CGImage {
         if let zoom: CGFloat = zoom {
@@ -14,6 +19,17 @@ public class ImageView: ImageViewable
             self.image = self.createImage(maxSize: maxSize, large: large)
         }
         return self.image
+    }
+
+    public func onTap(_ point: CGPoint) {
+        self.settings.ignoreSafeArea = !self.settings.ignoreSafeArea
+        self.settings.version += 1
+    }
+
+    public func onZoom(_ factor: CGFloat) {
+    }
+
+    public func onZoomEnd(_ factor: CGFloat) {
     }
 
     private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage {

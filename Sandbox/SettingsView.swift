@@ -18,7 +18,7 @@ public struct SettingsView: View {
         .navigationTitle("Settings")
         .onDisappear {
             if (!self.anotherSettingsView) {
-                self.settings.version += 1
+                self.settings.versionSettings += 1
             }
         }
     }

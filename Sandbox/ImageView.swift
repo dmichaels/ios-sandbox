@@ -4,47 +4,60 @@ public class ImageView: ImageViewable
 {
            private      var settings: ContentView.Settings
     public private(set) var image: CGImage = DummyImage.instance
+           private      var backgroundColor: CGColor
+    private var imageSizeLarge = false
+    private var maxSize: CGSize = CGSize.zero
 
     required public init(_ settings: ContentView.Settings) {
         self.settings = settings
+        self.backgroundColor = UIColor.red.cgColor
     }
 
-    public func update(maxSize: CGSize, large: Bool = false, zoom: CGFloat? = nil) -> CGImage {
-        if let zoom: CGFloat = zoom {
-            var width: Int = Int(min(200 * zoom, maxSize.width))
-            var height: Int = Int(min(300 * zoom, maxSize.height))
-            self.image = self.createImage(width: width, height: height)
-        }
-        else {
-            self.image = self.createImage(maxSize: maxSize, large: large)
-        }
+    public func update(maxSize: CGSize /* , zoom: CGFloat? = nil */ ) -> CGImage {
+        self.image = self.createImage(maxSize: maxSize, large: self.imageSizeLarge)
         return self.image
     }
 
     public func onTap(_ point: CGPoint) {
-        self.settings.ignoreSafeArea = !self.settings.ignoreSafeArea
-        self.settings.version += 1
+        self.imageSizeLarge.toggle()
+        self.image = self.createImage(maxSize: self.maxSize, large: self.imageSizeLarge)
+        self.settings.updateImage()
+        // self.settings.ignoreSafeArea = !self.settings.ignoreSafeArea
+        // self.settings.versionSettings += 1
     }
 
-    public func onZoom(_ factor: CGFloat) {
+    public func onLongTap(_ point: CGPoint?) {
+        self.backgroundColor = UIColor.cyan.cgColor
+        self.image = self.createImage()
+        self.settings.updateImage()
+    }
+
+    public func onZoom(_ zoomFactor: CGFloat) {
+        var width: Int = Int(min(200 * zoomFactor, maxSize.width))
+        var height: Int = Int(min(300 * zoomFactor, maxSize.height))
+        self.image = self.createImage(width: width, height: height)
+        self.settings.updateImage()
     }
 
     public func onZoomEnd(_ factor: CGFloat) {
     }
 
     private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage {
+        self.maxSize = maxSize
         let width = !large ? 200 : Int(maxSize.width)
         let height = !large ? 300 : Int(maxSize.height)
         return self.createImage(width: width, height: height)
     }
 
-    private func createImage(width: Int, height: Int) -> CGImage {
+    private func createImage(width: Int? = nil, height: Int? = nil) -> CGImage {
+        let width: Int = width ?? self.image.width
+        let height: Int = height ?? self.image.height
         let context = CGContext(
             data: nil, width: width, height: height,
             bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         )!
-        context.setFillColor(UIColor.red.cgColor)
+        context.setFillColor(self.backgroundColor)
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         context.translateBy(x: 0, y: CGFloat(height))
         context.scaleBy(x: 1.0, y: -1.0)

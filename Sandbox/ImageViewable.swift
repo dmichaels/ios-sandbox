@@ -4,14 +4,14 @@ public protocol ImageViewable
 {
     init(_ settings: ContentView.Settings)
     var image: CGImage { get }
-    func update(maxSize: CGSize, large: Bool, zoom: CGFloat?) -> CGImage
+    func update(maxSize: CGSize) -> CGImage
     func onTap(_ point: CGPoint)
     func onLongTap(_ point: CGPoint)
     func onDoubleTap(_ point: CGPoint?)
     func onDrag(_ point: CGPoint)
     func onDragEnd(_ point: CGPoint)
-    func onZoom(_ factor: CGFloat)
-    func onZoomEnd(_ factor: CGFloat)
+    func onZoom(_ zoomFactor: CGFloat)
+    func onZoomEnd(_ zoomFactor: CGFloat)
 }
 
 extension ImageViewable {

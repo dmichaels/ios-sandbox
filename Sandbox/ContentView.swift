@@ -6,10 +6,16 @@ import SwiftUI
 public struct ContentView: View
 {
     public class Settings: ObservableObject {
+
         @Published public var hideStatusBar: Bool = true
         @Published public var hideToolBar: Bool = false
         @Published public var ignoreSafeArea: Bool = false
-        @Published public var version: Int = 0
+        @Published public var versionSettings: Int = 0
+        @Published public var versionImage: Int = 0
+
+        public func updateSettings() { self.versionSettings += 1 }
+        public func updateImage()    { self.versionImage += 1 }
+
         public static let Defaults: Settings = Settings()
     }
 
@@ -17,7 +23,6 @@ public struct ContentView: View
                        private var imageView: ImageViewable
     @State             private var image: CGImage                   = DummyImage.instance
     @State             private var imageAngle: Angle                = .zero
-    @State             private var imageSizeLarge                   = false
     @State             private var containerSize: CGSize            = .zero
     @State             private var containerBackground: Color?      = Color.yellow
     @StateObject       private var orientation: OrientationObserver = OrientationObserver()
@@ -42,8 +47,9 @@ public struct ContentView: View
                         .onSmartGesture(
                             normalizePoint: self.normalizePoint,
                             ignorePoint: self.ignorePoint,
-                            onTap: { imagePoint in self.updateImage(toggle: true) ; self.imageView.onTap(imagePoint) },
-                            onZoom: { zoomFactor in self.updateImage(zoom: zoomFactor) },
+                            onTap:     { imagePoint in self.imageView.onTap(imagePoint) },
+                            onLongTap: { imagePoint in self.imageView.onLongTap(imagePoint) },
+                            onZoom:    { zoomFactor in self.imageView.onZoom(zoomFactor) },
                             onSwipeLeft: { self.showSettingsView = true }
                         )
                 }
@@ -53,8 +59,11 @@ public struct ContentView: View
                 .onChange(of: containerGeometry.size) {
                     self.updateImage(geometry: containerGeometry)
                 }
-                .onChange(of: self.settings.version) {
+                .onChange(of: self.settings.versionSettings) {
                     self.updateSettings()
+                }
+                .onChange(of: self.settings.versionImage) {
+                    self.image = self.imageView.image
                 }
                 .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
             }
@@ -72,12 +81,11 @@ public struct ContentView: View
         ignoreSafeArea = self.settings.ignoreSafeArea
     }
 
-    private func updateImage(geometry: GeometryProxy? = nil, toggle: Bool = false, zoom: CGFloat? = nil) {
+    private func updateImage(geometry: GeometryProxy? = nil) {
         if let geometry: GeometryProxy = geometry, self.containerSize != geometry.size {
             self.containerSize = geometry.size
         }
-        if (toggle) { self.imageSizeLarge.toggle() }
-        self.image = self.imageView.update(maxSize: self.containerSize, large: self.imageSizeLarge, zoom: zoom)
+        self.image = self.imageView.update(maxSize: self.containerSize)
     }
 
     private func rotateImage() {

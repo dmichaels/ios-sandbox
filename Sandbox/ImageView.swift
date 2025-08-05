@@ -1,6 +1,6 @@
 import SwiftUI
 
-public class ImageView
+public class ImageView: ImageViewable
 {
     public private(set) var image: CGImage = DummyImage.instance
 

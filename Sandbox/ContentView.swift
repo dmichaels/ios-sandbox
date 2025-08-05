@@ -3,19 +3,24 @@ import SwiftUI
 // Example (with help from ChatGPT) relevant to simplifying ios-lifegame setup 2027-07-31 ...
 // Went through lots of iterations; this is the simplest we came up with; lots of subtleties.
 //
-struct ContentView: View {
+internal struct ContentView: View {
 
-    @EnvironmentObject   var settings: Settings
-    @State private       var image: CGImage = DummyImage.instance
-    @State private       var imageView: ImageView = ImageView()
-    @State private       var imageAngle: Angle = .zero
-    @State private       var imageSizeLarge = false
-    @State private       var containerSize: CGSize = .zero
-    @State private       var containerBackground: Color? = Color.yellow
-    @State private       var showSettingsView: Bool = false
-    @State private       var hideStatusBar: Bool = Settings.Defaults.hideStatusBar
-    @State private       var ignoreSafeArea: Bool = Settings.Defaults.ignoreSafeArea
-    @StateObject private var orientation: OrientationObserver = OrientationObserver()
+    @EnvironmentObject private var settings: Settings
+                       private var imageView: ImageViewable
+
+    @State             private var image: CGImage                   = DummyImage.instance
+    @State             private var imageAngle: Angle                = .zero
+    @State             private var imageSizeLarge                   = false
+    @State             private var containerSize: CGSize            = .zero
+    @State             private var containerBackground: Color?      = Color.yellow
+    @StateObject       private var orientation: OrientationObserver = OrientationObserver()
+    @State             private var showSettingsView: Bool           = false
+    @State             private var hideStatusBar: Bool              = Settings.Defaults.hideStatusBar
+    @State             private var ignoreSafeArea: Bool             = Settings.Defaults.ignoreSafeArea
+
+    internal init(_ imageView: ImageView) {
+        self.imageView = imageView
+    }
 
     internal var body: some View {
         NavigationStack {

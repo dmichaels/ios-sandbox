@@ -4,7 +4,7 @@ import SwiftUI
 struct SandboxApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(ImageView())
                 .environmentObject(Settings())
         }
     }

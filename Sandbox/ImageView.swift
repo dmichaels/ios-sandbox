@@ -16,13 +16,13 @@ public class ImageView: ImageViewable
         return self.image
     }
 
-    private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage /*?*/ {
+    private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage {
         let width = !large ? 200 : Int(maxSize.width)
         let height = !large ? 300 : Int(maxSize.height)
         return self.createImage(width: width, height: height)
     }
 
-    private func createImage(width: Int, height: Int) -> CGImage /*?*/ {
+    private func createImage(width: Int, height: Int) -> CGImage {
         let context = CGContext(
             data: nil, width: width, height: height,
             bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),

@@ -47,9 +47,11 @@ public struct ContentView: View
                         .onSmartGesture(
                             normalizePoint: self.normalizePoint,
                             ignorePoint: self.ignorePoint,
-                            onTap:     { imagePoint in self.imageView.onTap(imagePoint) },
-                            onLongTap: { imagePoint in self.imageView.onLongTap(imagePoint) },
-                            onZoom:    { zoomFactor in self.imageView.onZoom(zoomFactor) },
+                            onTap:       { imagePoint in self.imageView.onTap(imagePoint) },
+                            onLongTap:   { imagePoint in self.imageView.onLongTap(imagePoint) },
+                            onDoubleTap: { imagePoint in self.imageView.onDoubleTap(imagePoint) },
+                            onZoom:      { zoomFactor in self.imageView.onZoom(zoomFactor) },
+                            onZoomEnd:   { zoomFactor in self.imageView.onZoomEnd(zoomFactor) },
                             onSwipeLeft: { self.showSettingsView = true }
                         )
                 }
@@ -75,12 +77,6 @@ public struct ContentView: View
         .onDisappear { self.orientation.deregister() }
     }
 
-    private func updateSettings() {
-        hideStatusBar = self.settings.hideStatusBar
-        hideToolBar = self.settings.hideToolBar
-        ignoreSafeArea = self.settings.ignoreSafeArea
-    }
-
     private func updateImage(geometry: GeometryProxy? = nil) {
         if let geometry: GeometryProxy = geometry, self.containerSize != geometry.size {
             self.containerSize = geometry.size
@@ -88,12 +84,8 @@ public struct ContentView: View
         self.image = self.imageView.update(maxSize: self.containerSize)
     }
 
-    private func rotateImage() {
-        self.imageAngle = self.orientation.rotationAngle()
-    }
-
     private func updateOrientation(_ current: UIDeviceOrientation, _ previous: UIDeviceOrientation) {
-        self.rotateImage()
+        self.imageAngle = self.orientation.rotationAngle()
     }
 
     private func normalizePoint(_ point: CGPoint) -> CGPoint {
@@ -104,6 +96,12 @@ public struct ContentView: View
     private func ignorePoint(_ normalizedPoint: CGPoint) -> Bool {
         return (normalizedPoint.x < 0) || (normalizedPoint.x >= CGFloat(self.image.width))
             || (normalizedPoint.y < 0) || (normalizedPoint.y >= CGFloat(self.image.height))
+    }
+
+    private func updateSettings() {
+        hideStatusBar = self.settings.hideStatusBar
+        hideToolBar = self.settings.hideToolBar
+        ignoreSafeArea = self.settings.ignoreSafeArea
     }
 }
 

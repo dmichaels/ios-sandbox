@@ -24,7 +24,7 @@ public struct ContentView: View
 
     @EnvironmentObject private var config: ContentView.Config
                        private var settingsView: SettingsView
-                       private var toolBarView: ToolbarView
+                       private var toolBarView: ToolBarView
                        private var imageView: ImageViewable
     @State             private var image: CGImage                   = DummyImage.instance
     @State             private var imageAngle: Angle                = .zero
@@ -36,7 +36,7 @@ public struct ContentView: View
     @State             private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
     @State             private var ignoreSafeArea: Bool             = ContentView.Config.Defaults.ignoreSafeArea
 
-    public init(imageView: ImageView, settingsView: SettingsView, toolBarView: ToolbarView) {
+    public init(imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
         self.imageView = imageView
         self.settingsView = settingsView
         self.toolBarView = toolBarView
@@ -109,7 +109,7 @@ public struct ContentView: View
 
 extension View {
     @ViewBuilder
-    internal func toolBar(hidden: Bool, _ toolBarView: ToolbarView) -> some View {
+    internal func toolBar(hidden: Bool, _ toolBarView: ToolBarView) -> some View {
         if (hidden) { self } else { self.toolbar { toolBarView } }
     }
 }

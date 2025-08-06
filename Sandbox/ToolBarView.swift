@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct ToolbarView: ToolbarContent {
+public struct ToolBarView: ToolbarContent {
     private let config: ContentView.Config
     public init(_ config: ContentView.Config) { self.config = config }
     public var body: some ToolbarContent {

@@ -9,10 +9,12 @@ public struct ContentView: View
         @Published public var hideStatusBar: Bool = true
         @Published public var hideToolBar: Bool = false
         @Published public var ignoreSafeArea: Bool = false
-        @Published public var versionSettings: Int = 0
         @Published public var versionImage: Int = 0
-        public func updateSettings() { self.versionSettings += 1 }
+        @Published public var versionSettings: Int = 0
+        @Published public var versionSettingsView: Int = 0
         public func updateImage()    { self.versionImage += 1 }
+        public func updateSettings() { self.versionSettings += 1 }
+        public func showSettingsView() { self.versionSettingsView += 1 }
         public static let Defaults: Config = Config()
     }
 
@@ -42,21 +44,26 @@ public struct ContentView: View
                     .resizable().frame(width: CGFloat(image.width), height: CGFloat(image.height))
                     .position(x: containerGeometry.size.width / 2, y: containerGeometry.size.height / 2)
                     .rotationEffect(self.imageAngle)
-                    .onSmartGesture(
-                        normalizePoint: self.normalizePoint,
-                        ignorePoint: self.ignorePoint,
-                        onTap:       { imagePoint in self.imageView.onTap(imagePoint) },
-                        onLongTap:   { imagePoint in self.imageView.onLongTap(imagePoint) },
-                        onDoubleTap: { imagePoint in self.imageView.onDoubleTap(imagePoint) },
-                        onZoom:      { zoomFactor in self.imageView.onZoom(zoomFactor) },
-                        onZoomEnd:   { zoomFactor in self.imageView.onZoomEnd(zoomFactor) },
-                        onSwipeLeft: { self.showSettingsView = true }
-                    )
                 }
-                .onAppear                                  { self.updateImage(geometry: containerGeometry) }
-                .onChange(of: containerGeometry.size)      { self.updateImage(geometry: containerGeometry) }
-                .onChange(of: self.config.versionSettings) { self.updateSettings() }
-                .onChange(of: self.config.versionImage)    { self.image = self.imageView.image }
+                .onSmartGesture(
+                    normalizePoint: self.normalizePoint,
+                    ignorePoint:    self.ignorePoint,
+                    onTap:          { imagePoint in self.imageView.onTap(imagePoint) },
+                    onLongTap:      { imagePoint in self.imageView.onLongTap(imagePoint) },
+                    onDoubleTap:    { imagePoint in self.imageView.onDoubleTap(imagePoint) },
+                    onDrag:         { imagePoint in self.imageView.onDrag(imagePoint) },
+                    onDragEnd:      { imagePoint in self.imageView.onDragEnd(imagePoint) },
+                    onDragStrict:   self.imageView.onDragStrict,
+                    onZoom:         { zoomFactor in self.imageView.onZoom(zoomFactor) },
+                    onZoomEnd:      { zoomFactor in self.imageView.onZoomEnd(zoomFactor) },
+                    onSwipeLeft:    { self.imageView.onSwipeLeft() },
+                    onSwipeRight:   { self.imageView.onSwipeRight() }
+                )
+                .onAppear                                      { self.updateImage(geometry: containerGeometry) }
+                .onChange(of: containerGeometry.size)          { self.updateImage(geometry: containerGeometry) }
+                .onChange(of: self.config.versionSettings)     { self.updateSettings() }
+                .onChange(of: self.config.versionSettingsView) { self.showSettingsView = true }
+                .onChange(of: self.config.versionImage)        { self.image = self.imageView.image }
                 .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
             }
             .safeArea(ignore: self.ignoreSafeArea)

@@ -3,13 +3,13 @@ import SwiftUI
 public class ImageView: ImageViewable
 {
     public private(set) var image: CGImage = DummyImage.instance
-    private var settings: ContentView.Config
+    private var config: ContentView.Config
     private var backgroundColor: CGColor
     private var imageSizeLarge = false
     private var maxSize: CGSize = CGSize.zero
 
-    required public init(_ settings: ContentView.Config) {
-        self.settings = settings
+    required public init(_ config: ContentView.Config) {
+        self.config = config
         self.backgroundColor = UIColor.red.cgColor
     }
 
@@ -21,24 +21,28 @@ public class ImageView: ImageViewable
     public func onTap(_ point: CGPoint) {
         self.imageSizeLarge.toggle()
         self.image = self.createImage(maxSize: self.maxSize, large: self.imageSizeLarge)
-        self.settings.updateImage()
+        self.config.updateImage()
     }
 
     public func onLongTap(_ point: CGPoint?) {
         self.backgroundColor = UIColor.cyan.cgColor
         self.image = self.createImage()
-        self.settings.updateImage()
+        self.config.updateImage()
     }
 
     public func onZoom(_ zoomFactor: CGFloat) {
         var width: Int = Int(min(200 * zoomFactor, maxSize.width))
         var height: Int = Int(min(300 * zoomFactor, maxSize.height))
         self.image = self.createImage(width: width, height: height)
-        self.settings.updateImage()
+        self.config.updateImage()
     }
 
     public func onZoomEnd(_ zoomFactor: CGFloat) {
         self.onZoom(zoomFactor)
+    }
+
+    public func onSwipeLeft() {
+        self.config.showSettingsView()
     }
 
     private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage {

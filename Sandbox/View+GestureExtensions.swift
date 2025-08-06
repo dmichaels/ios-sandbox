@@ -195,6 +195,7 @@ private struct SmartGesture: ViewModifier
                         )
                         self._onLongTapTriggeredTime = nil
                         if (!onLongTapTriggeredRecently) {
+                            print("TAP> \(value.location) -> \(self._normalizePoint(value.location))")
                             if let point: CGPoint = self._normalizePoint(value.location) {
                                 self.onTap(point)
                             }

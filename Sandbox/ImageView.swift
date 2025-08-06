@@ -1,21 +1,21 @@
 import SwiftUI
+import Utils
 
-public class ImageView: ImageViewable
+public class ImageView: ImageContentView.Viewable
 {
     public private(set) var image: CGImage = DummyImage.instance
     private var config: ImageContentView.Config
     private var backgroundColor: CGColor
-    private var imageSizeLarge = false
     private var viewSize: CGSize = CGSize.zero
+    private var imageSizeLarge = false
 
     required public init(_ config: ImageContentView.Config) {
         self.config = config
         self.backgroundColor = UIColor.red.cgColor
     }
 
-    public func update(viewSize: CGSize) -> CGImage {
+    public func update(viewSize: CGSize) {
         self.image = self.createImage(viewSize: viewSize, large: self.imageSizeLarge)
-        return self.image
     }
 
     public func onTap(_ point: CGPoint) {

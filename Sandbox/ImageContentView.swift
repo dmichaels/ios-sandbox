@@ -1,12 +1,13 @@
 import SwiftUI
+import Utils
 
 // Example (with help from ChatGPT) relevant to simplifying ios-lifegame setup 2027-07-31 ...
 // Went through lots of iterations; this is the simplest we came up with; lots of subtleties.
 //
 public struct ImageContentView: View
 {
-    public class Config: ObservableObject {
-
+    public class Config: ObservableObject
+    {
         public var hideStatusBar: Bool  = false
         public var hideToolBar: Bool    = false
         public var ignoreSafeArea: Bool = false
@@ -28,10 +29,27 @@ public struct ImageContentView: View
         internal static let Defaults: Config = Config()
     }
 
+    public protocol Viewable
+    {
+        init(_ config: ImageContentView.Config)
+        var  image: CGImage { get }
+        func update(viewSize: CGSize)
+        func onTap(_ point: CGPoint)
+        func onLongTap(_ point: CGPoint)
+        func onDoubleTap(_ point: CGPoint?)
+        func onDrag(_ point: CGPoint)
+        func onDragEnd(_ point: CGPoint)
+        var  onDragStrict: Bool { get }
+        func onZoom(_ zoomFactor: CGFloat)
+        func onZoomEnd(_ zoomFactor: CGFloat)
+        func onSwipeLeft()
+        func onSwipeRight()
+    }
+
     @ObservedObject private var config: ImageContentView.Config
                     private var settingsView: SettingsView
                     private var toolBarView: ToolBarView
-                    private var imageView: ImageViewable
+                    private var imageView: ImageContentView.Viewable
     @State          private var image: CGImage                   = DummyImage.instance
     @State          private var imageAngle: Angle                = Angle.zero
     @State          private var containerSize: CGSize            = CGSize.zero
@@ -93,7 +111,8 @@ public struct ImageContentView: View
 
     private func updateImage(geometry: GeometryProxy) {
         self.containerSize = geometry.size
-        self.image = self.imageView.update(viewSize: self.containerSize)
+        self.imageView.update(viewSize: self.containerSize)
+        self.image = self.imageView.image
     }
 
     private func updateOrientation(_ current: UIDeviceOrientation, _ previous: UIDeviceOrientation) {
@@ -118,14 +137,27 @@ public struct ImageContentView: View
 }
 
 extension View {
-
     @ViewBuilder
     internal func toolBar(hidden: Bool, _ toolBarView: ToolBarView) -> some View {
         if (hidden) { self } else { self.toolbar { toolBarView } }
     }
-
     @ViewBuilder
     internal func safeArea(ignore: Bool) -> some View {
         if (ignore) { self.ignoresSafeArea() } else { self }
     }
+}
+
+extension ImageContentView.Viewable {
+    public var  image: CGImage { DummyImage.instance }
+    public func update(viewSize: CGSize) {}
+    public func onTap(_ point: CGPoint) {}
+    public func onLongTap(_ point: CGPoint) {}
+    public func onDoubleTap(_ point: CGPoint?) {}
+    public func onDrag(_ point: CGPoint) {}
+    public func onDragEnd(_ point: CGPoint) {}
+    public var  onDragStrict: Bool { false }
+    public func onZoom(_ zoomFactor: CGFloat) {}
+    public func onZoomEnd(_ zoomFactor: CGFloat) {}
+    public func onSwipeLeft() {}
+    public func onSwipeRight() {}
 }

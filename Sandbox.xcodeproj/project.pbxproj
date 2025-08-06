@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		989742E22E43CB6000EB6D2F /* Utils in Frameworks */ = {isa = PBXBuildFile; productRef = 989742E12E43CB6000EB6D2F /* Utils */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		989741CA2E3F9B5200EB6D2F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				989742E22E43CB6000EB6D2F /* Utils in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = Sandbox;
 			packageProductDependencies = (
+				989742E12E43CB6000EB6D2F /* Utils */,
 			);
 			productName = Sandbox;
 			productReference = 989741BC2E3F9B5100EB6D2F /* Sandbox.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = 989741B32E3F9B5100EB6D2F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				989742E02E43CB6000EB6D2F /* XCRemoteSwiftPackageReference "ios-utils" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 989741BD2E3F9B5100EB6D2F /* Products */;
 			projectDirPath = "";
@@ -558,6 +567,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		989742E02E43CB6000EB6D2F /* XCRemoteSwiftPackageReference "ios-utils" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dmichaels/ios-utils.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		989742E12E43CB6000EB6D2F /* Utils */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 989742E02E43CB6000EB6D2F /* XCRemoteSwiftPackageReference "ios-utils" */;
+			productName = Utils;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 989741B42E3F9B5100EB6D2F /* Project object */;
 }

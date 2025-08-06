@@ -3,12 +3,12 @@ import SwiftUI
 public class ImageView: ImageViewable
 {
     public private(set) var image: CGImage = DummyImage.instance
-    private var config: ContentView.Config
+    private var config: ImageContentView.Config
     private var backgroundColor: CGColor
     private var imageSizeLarge = false
     private var viewSize: CGSize = CGSize.zero
 
-    required public init(_ config: ContentView.Config) {
+    required public init(_ config: ImageContentView.Config) {
         self.config = config
         self.backgroundColor = UIColor.red.cgColor
     }

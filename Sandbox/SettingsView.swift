@@ -2,13 +2,13 @@ import SwiftUI
 
 public struct SettingsView: View {
 
-    private let config: ContentView.Config
+    private let config: ImageContentView.Config
     @State private var hideStatusBar: Bool = false
     @State private var hideToolBar: Bool = false
     @State private var ignoreSafeArea: Bool = false
     @State private var anotherSettingsView: Bool = false
 
-    init(_ config: ContentView.Config) {
+    init(_ config: ImageContentView.Config) {
         self.config = config
     }
 

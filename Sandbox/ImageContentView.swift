@@ -3,7 +3,7 @@ import SwiftUI
 // Example (with help from ChatGPT) relevant to simplifying ios-lifegame setup 2027-07-31 ...
 // Went through lots of iterations; this is the simplest we came up with; lots of subtleties.
 //
-public struct ContentView: View
+public struct ImageContentView: View
 {
     public class Config: ObservableObject {
 
@@ -28,7 +28,7 @@ public struct ContentView: View
         internal static let Defaults: Config = Config()
     }
 
-    @ObservedObject private var config: ContentView.Config
+    @ObservedObject private var config: ImageContentView.Config
                     private var settingsView: SettingsView
                     private var toolBarView: ToolBarView
                     private var imageView: ImageViewable
@@ -42,7 +42,8 @@ public struct ContentView: View
     @State          private var hideToolBar: Bool
     @State          private var ignoreSafeArea: Bool
 
-    public init(config: ContentView.Config, imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
+    public init(config: ImageContentView.Config,
+                imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView

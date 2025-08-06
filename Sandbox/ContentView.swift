@@ -22,19 +22,19 @@ public struct ContentView: View
         internal static let Defaults: Config = Config()
     }
 
-    @ObservedObject    private var config: ContentView.Config
-                       private var settingsView: SettingsView
-                       private var toolBarView: ToolBarView
-                       private var imageView: ImageViewable
-    @State             private var image: CGImage                   = DummyImage.instance
-    @State             private var imageAngle: Angle                = .zero
-    @State             private var containerSize: CGSize            = .zero
-    @State             private var containerBackground: Color?      = Color.yellow
-    @StateObject       private var orientation: OrientationObserver = OrientationObserver()
-    @State             private var showSettingsView: Bool           = false
-    @State             private var hideStatusBar: Bool              = ContentView.Config.Defaults.hideStatusBar
-    @State             private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
-    @State             private var ignoreSafeArea: Bool             = ContentView.Config.Defaults.ignoreSafeArea
+    @ObservedObject private var config: ContentView.Config
+                    private var settingsView: SettingsView
+                    private var toolBarView: ToolBarView
+                    private var imageView: ImageViewable
+    @State          private var image: CGImage                   = DummyImage.instance
+    @State          private var imageAngle: Angle                = .zero
+    @State          private var containerSize: CGSize            = .zero
+    @State          private var containerBackground: Color?      = Color.yellow
+    @StateObject    private var orientation: OrientationObserver = OrientationObserver()
+    @State          private var showSettingsView: Bool           = false
+    @State          private var hideStatusBar: Bool              = ContentView.Config.Defaults.hideStatusBar
+    @State          private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
+    @State          private var ignoreSafeArea: Bool             = ContentView.Config.Defaults.ignoreSafeArea
 
     public init(config: ContentView.Config, imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
         self.config = config

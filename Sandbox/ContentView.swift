@@ -39,8 +39,7 @@ public struct ContentView: View
             GeometryReader { containerGeometry in ZStack {
                 containerBackground ?? Color.green // Important trickery here
                 Image(decorative: self.image, scale: 1.0)
-                    .resizable()
-                    .frame(width: CGFloat(image.width), height: CGFloat(image.height))
+                    .resizable().frame(width: CGFloat(image.width), height: CGFloat(image.height))
                     .position(x: containerGeometry.size.width / 2, y: containerGeometry.size.height / 2)
                     .rotationEffect(self.imageAngle)
                     .onSmartGesture(

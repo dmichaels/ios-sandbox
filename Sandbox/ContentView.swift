@@ -33,8 +33,8 @@ public struct ContentView: View
                     private var toolBarView: ToolBarView
                     private var imageView: ImageViewable
     @State          private var image: CGImage                   = DummyImage.instance
-    @State          private var imageAngle: Angle                = .zero
-    @State          private var containerSize: CGSize            = .zero
+    @State          private var imageAngle: Angle                = Angle.zero
+    @State          private var containerSize: CGSize            = CGSize.zero
     @State          private var containerBackground: Color?      = Color.yellow
     @StateObject    private var orientation: OrientationObserver = OrientationObserver()
     @State          private var showSettingsView: Bool           = false

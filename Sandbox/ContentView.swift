@@ -7,9 +7,9 @@ public struct ContentView: View
 {
     public class Config: ObservableObject {
 
-        @Published public var hideStatusBar: Bool = true
-        @Published public var hideToolBar: Bool = false
-        @Published public var ignoreSafeArea: Bool = false
+        public var hideStatusBar: Bool  = false
+        public var hideToolBar: Bool    = false
+        public var ignoreSafeArea: Bool = false
 
         init(hideStatusBar: Bool = false, hideToolBar: Bool = false, ignoreSafeArea: Bool = false) {
             self.hideStatusBar = hideStatusBar

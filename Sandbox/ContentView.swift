@@ -16,7 +16,8 @@ public struct ContentView: View
         public static let Defaults: Config = Config()
     }
 
-    @EnvironmentObject private var settings: ContentView.Config
+    @EnvironmentObject private var config: ContentView.Config
+                       private var settingsView: SettingsView
                        private var imageView: ImageViewable
     @State             private var image: CGImage                   = DummyImage.instance
     @State             private var imageAngle: Angle                = .zero
@@ -28,8 +29,9 @@ public struct ContentView: View
     @State             private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
     @State             private var ignoreSafeArea: Bool             = ContentView.Config.Defaults.ignoreSafeArea
 
-    internal init(_ imageView: ImageView) {
+    internal init(imageView: ImageView, settingsView: SettingsView) {
         self.imageView = imageView
+        self.settingsView = settingsView
     }
 
     public var body: some View {
@@ -52,19 +54,11 @@ public struct ContentView: View
                         onSwipeLeft: { self.showSettingsView = true }
                     )
                 }
-                .onAppear {
-                    self.updateImage(geometry: containerGeometry)
-                }
-                .onChange(of: containerGeometry.size) {
-                    self.updateImage(geometry: containerGeometry)
-                }
-                .onChange(of: self.settings.versionSettings) {
-                    self.updateSettings()
-                }
-                .onChange(of: self.settings.versionImage) {
-                    self.image = self.imageView.image
-                }
-                .navigationDestination(isPresented: $showSettingsView) { SettingsView() }
+                .onAppear                                  { self.updateImage(geometry: containerGeometry) }
+                .onChange(of: containerGeometry.size)      { self.updateImage(geometry: containerGeometry) }
+                .onChange(of: self.config.versionSettings) { self.updateSettings() }
+                .onChange(of: self.config.versionImage)    { self.image = self.imageView.image }
+                .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
             }
             .safeArea(ignore: ignoreSafeArea)
             .toolBar(hidden: hideToolBar || ignoreSafeArea, showSettingsView: $showSettingsView)
@@ -96,9 +90,9 @@ public struct ContentView: View
     }
 
     private func updateSettings() {
-        hideStatusBar = self.settings.hideStatusBar
-        hideToolBar = self.settings.hideToolBar
-        ignoreSafeArea = self.settings.ignoreSafeArea
+        hideStatusBar = self.config.hideStatusBar
+        hideToolBar = self.config.hideToolBar
+        ignoreSafeArea = self.config.ignoreSafeArea
     }
 }
 

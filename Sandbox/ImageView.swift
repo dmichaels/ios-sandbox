@@ -13,7 +13,7 @@ public class ImageView: ImageViewable
         self.backgroundColor = UIColor.red.cgColor
     }
 
-    public func update(maxSize: CGSize /* , zoom: CGFloat? = nil */ ) -> CGImage {
+    public func update(maxSize: CGSize) -> CGImage {
         self.image = self.createImage(maxSize: maxSize, large: self.imageSizeLarge)
         return self.image
     }
@@ -22,8 +22,6 @@ public class ImageView: ImageViewable
         self.imageSizeLarge.toggle()
         self.image = self.createImage(maxSize: self.maxSize, large: self.imageSizeLarge)
         self.settings.updateImage()
-        // self.settings.ignoreSafeArea = !self.settings.ignoreSafeArea
-        // self.settings.versionSettings += 1
     }
 
     public func onLongTap(_ point: CGPoint?) {

@@ -29,7 +29,7 @@ public struct ContentView: View
     @State             private var showSettingsView: Bool           = false
     @State             private var hideStatusBar: Bool              = ContentView.Config.Defaults.hideStatusBar
     @State             private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
-    @State             private var ignoreSafeArea: Bool              = ContentView.Config.Defaults.ignoreSafeArea
+    @State             private var ignoreSafeArea: Bool             = ContentView.Config.Defaults.ignoreSafeArea
 
     internal init(_ imageView: ImageView) {
         self.imageView = imageView
@@ -39,21 +39,21 @@ public struct ContentView: View
         NavigationStack {
             GeometryReader { containerGeometry in ZStack {
                 containerBackground ?? Color.green // Important trickery here
-                    Image(decorative: self.image, scale: 1.0)
-                        .resizable()
-                        .frame(width: CGFloat(image.width), height: CGFloat(image.height))
-                        .position(x: containerGeometry.size.width / 2, y: containerGeometry.size.height / 2)
-                        .rotationEffect(self.imageAngle)
-                        .onSmartGesture(
-                            normalizePoint: self.normalizePoint,
-                            ignorePoint: self.ignorePoint,
-                            onTap:       { imagePoint in self.imageView.onTap(imagePoint) },
-                            onLongTap:   { imagePoint in self.imageView.onLongTap(imagePoint) },
-                            onDoubleTap: { imagePoint in self.imageView.onDoubleTap(imagePoint) },
-                            onZoom:      { zoomFactor in self.imageView.onZoom(zoomFactor) },
-                            onZoomEnd:   { zoomFactor in self.imageView.onZoomEnd(zoomFactor) },
-                            onSwipeLeft: { self.showSettingsView = true }
-                        )
+                Image(decorative: self.image, scale: 1.0)
+                    .resizable()
+                    .frame(width: CGFloat(image.width), height: CGFloat(image.height))
+                    .position(x: containerGeometry.size.width / 2, y: containerGeometry.size.height / 2)
+                    .rotationEffect(self.imageAngle)
+                    .onSmartGesture(
+                        normalizePoint: self.normalizePoint,
+                        ignorePoint: self.ignorePoint,
+                        onTap:       { imagePoint in self.imageView.onTap(imagePoint) },
+                        onLongTap:   { imagePoint in self.imageView.onLongTap(imagePoint) },
+                        onDoubleTap: { imagePoint in self.imageView.onDoubleTap(imagePoint) },
+                        onZoom:      { zoomFactor in self.imageView.onZoom(zoomFactor) },
+                        onZoomEnd:   { zoomFactor in self.imageView.onZoomEnd(zoomFactor) },
+                        onSwipeLeft: { self.showSettingsView = true }
+                    )
                 }
                 .onAppear {
                     self.updateImage(geometry: containerGeometry)

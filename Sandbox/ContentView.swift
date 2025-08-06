@@ -64,7 +64,7 @@ public struct ContentView: View
             .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, showSettingsView: $showSettingsView)
         }
         .statusBar(hidden: self.hideStatusBar)
-        .onAppear { self.orientation.register(self.updateOrientation) }
+        .onAppear    { self.orientation.register(self.updateOrientation) }
         .onDisappear { self.orientation.deregister() }
     }
 

@@ -6,16 +6,13 @@ import SwiftUI
 public struct ContentView: View
 {
     public class Config: ObservableObject {
-
         @Published public var hideStatusBar: Bool = true
         @Published public var hideToolBar: Bool = false
         @Published public var ignoreSafeArea: Bool = false
         @Published public var versionSettings: Int = 0
         @Published public var versionImage: Int = 0
-
         public func updateSettings() { self.versionSettings += 1 }
         public func updateImage()    { self.versionImage += 1 }
-
         public static let Defaults: Config = Config()
     }
 

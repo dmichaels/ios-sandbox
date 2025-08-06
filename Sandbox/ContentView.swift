@@ -11,6 +11,12 @@ public struct ContentView: View
         @Published public var hideToolBar: Bool = false
         @Published public var ignoreSafeArea: Bool = false
 
+        init(hideStatusBar: Bool = false, hideToolBar: Bool = false, ignoreSafeArea: Bool = false) {
+            self.hideStatusBar = hideStatusBar
+            self.hideToolBar = hideToolBar
+            self.ignoreSafeArea = ignoreSafeArea
+        }
+
         public func updateImage()      { self.versionImage += 1 }
         public func updateSettings()   { self.versionSettings += 1 }
         public func showSettingsView() { self.versionSettingsView += 1 }
@@ -32,15 +38,18 @@ public struct ContentView: View
     @State          private var containerBackground: Color?      = Color.yellow
     @StateObject    private var orientation: OrientationObserver = OrientationObserver()
     @State          private var showSettingsView: Bool           = false
-    @State          private var hideStatusBar: Bool              = ContentView.Config.Defaults.hideStatusBar
-    @State          private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
-    @State          private var ignoreSafeArea: Bool             = ContentView.Config.Defaults.ignoreSafeArea
+    @State          private var hideStatusBar: Bool
+    @State          private var hideToolBar: Bool
+    @State          private var ignoreSafeArea: Bool
 
     public init(config: ContentView.Config, imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView
         self.toolBarView = toolBarView
+        self.hideStatusBar = config.hideStatusBar
+        self.hideToolBar = config.hideToolBar
+        self.ignoreSafeArea = config.ignoreSafeArea
     }
 
     public var body: some View {
@@ -108,8 +117,14 @@ public struct ContentView: View
 }
 
 extension View {
+
     @ViewBuilder
     internal func toolBar(hidden: Bool, _ toolBarView: ToolBarView) -> some View {
         if (hidden) { self } else { self.toolbar { toolBarView } }
+    }
+
+    @ViewBuilder
+    internal func safeArea(ignore: Bool) -> some View {
+        if (ignore) { self.ignoresSafeArea() } else { self }
     }
 }

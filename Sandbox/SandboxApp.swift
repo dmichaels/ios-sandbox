@@ -2,7 +2,7 @@ import SwiftUI
 
 @main
 struct SandboxApp: App {
-    let config: ContentView.Config = ContentView.Config()
+    let config: ContentView.Config = ContentView.Config(ignoreSafeArea: true)
     var body: some Scene {
         WindowGroup {
             ContentView(config: self.config,

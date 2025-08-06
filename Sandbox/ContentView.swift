@@ -68,10 +68,8 @@ public struct ContentView: View
         .onDisappear { self.orientation.deregister() }
     }
 
-    private func updateImage(geometry: GeometryProxy? = nil) {
-        if let geometry: GeometryProxy = geometry, self.containerSize != geometry.size {
-            self.containerSize = geometry.size
-        }
+    private func updateImage(geometry: GeometryProxy) {
+        self.containerSize = geometry.size
         self.image = self.imageView.update(maxSize: self.containerSize)
     }
 

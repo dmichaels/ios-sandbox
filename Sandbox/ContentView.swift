@@ -60,10 +60,10 @@ public struct ContentView: View
                 .onChange(of: self.config.versionImage)    { self.image = self.imageView.image }
                 .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
             }
-            .safeArea(ignore: ignoreSafeArea)
-            .toolBar(hidden: hideToolBar || ignoreSafeArea, showSettingsView: $showSettingsView)
+            .safeArea(ignore: self.ignoreSafeArea)
+            .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, showSettingsView: $showSettingsView)
         }
-        .statusBar(hidden: hideStatusBar)
+        .statusBar(hidden: self.hideStatusBar)
         .onAppear { self.orientation.register(self.updateOrientation) }
         .onDisappear { self.orientation.deregister() }
     }
@@ -88,9 +88,9 @@ public struct ContentView: View
     }
 
     private func updateSettings() {
-        hideStatusBar = self.config.hideStatusBar
-        hideToolBar = self.config.hideToolBar
-        ignoreSafeArea = self.config.ignoreSafeArea
+        self.hideStatusBar = self.config.hideStatusBar
+        self.hideToolBar = self.config.hideToolBar
+        self.ignoreSafeArea = self.config.ignoreSafeArea
     }
 }
 

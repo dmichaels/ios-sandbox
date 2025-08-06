@@ -20,6 +20,6 @@ extension ImageViewable {
     public func onDoubleTap(_ point: CGPoint?) {}
     public func onDrag(_ point: CGPoint) {}
     public func onDragEnd(_ point: CGPoint) {}
-    public func onZoom(_ factor: CGFloat) {}
-    public func onZoomEnd(_ factor: CGFloat) {}
+    public func onZoom(_ zoomFactor: CGFloat) {}
+    public func onZoomEnd(_ zoomFactor: CGFloat) {}
 }

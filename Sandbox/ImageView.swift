@@ -37,7 +37,8 @@ public class ImageView: ImageViewable
         self.settings.updateImage()
     }
 
-    public func onZoomEnd(_ factor: CGFloat) {
+    public func onZoomEnd(_ zoomFactor: CGFloat) {
+        self.onZoom(zoomFactor)
     }
 
     private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage {

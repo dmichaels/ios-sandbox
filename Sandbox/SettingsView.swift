@@ -10,7 +10,6 @@ public struct SettingsView: View {
 
     init(_ config: ContentView.Config) {
         self.config = config
-        print("FOO: \(config.hideToolBar) \(self.hideStatusBar)")
     }
 
     public var body: some View {

@@ -92,7 +92,7 @@ public struct ContentView: View
 
     private func updateImage(geometry: GeometryProxy) {
         self.containerSize = geometry.size
-        self.image = self.imageView.update(maxSize: self.containerSize)
+        self.image = self.imageView.update(viewSize: self.containerSize)
     }
 
     private func updateOrientation(_ current: UIDeviceOrientation, _ previous: UIDeviceOrientation) {

@@ -6,21 +6,21 @@ public class ImageView: ImageViewable
     private var config: ContentView.Config
     private var backgroundColor: CGColor
     private var imageSizeLarge = false
-    private var maxSize: CGSize = CGSize.zero
+    private var viewSize: CGSize = CGSize.zero
 
     required public init(_ config: ContentView.Config) {
         self.config = config
         self.backgroundColor = UIColor.red.cgColor
     }
 
-    public func update(maxSize: CGSize) -> CGImage {
-        self.image = self.createImage(maxSize: maxSize, large: self.imageSizeLarge)
+    public func update(viewSize: CGSize) -> CGImage {
+        self.image = self.createImage(viewSize: viewSize, large: self.imageSizeLarge)
         return self.image
     }
 
     public func onTap(_ point: CGPoint) {
         self.imageSizeLarge.toggle()
-        self.image = self.createImage(maxSize: self.maxSize, large: self.imageSizeLarge)
+        self.image = self.createImage(viewSize: self.viewSize, large: self.imageSizeLarge)
         self.config.updateImage()
     }
 
@@ -31,8 +31,8 @@ public class ImageView: ImageViewable
     }
 
     public func onZoom(_ zoomFactor: CGFloat) {
-        var width: Int = Int(min(200 * zoomFactor, maxSize.width))
-        var height: Int = Int(min(300 * zoomFactor, maxSize.height))
+        var width: Int = Int(min(200 * zoomFactor, viewSize.width))
+        var height: Int = Int(min(300 * zoomFactor, viewSize.height))
         self.image = self.createImage(width: width, height: height)
         self.config.updateImage()
     }
@@ -45,10 +45,10 @@ public class ImageView: ImageViewable
         self.config.showSettingsView()
     }
 
-    private func createImage(maxSize: CGSize, large: Bool = false) -> CGImage {
-        self.maxSize = maxSize
-        let width = !large ? 200 : Int(maxSize.width)
-        let height = !large ? 300 : Int(maxSize.height)
+    private func createImage(viewSize: CGSize, large: Bool = false) -> CGImage {
+        self.viewSize = viewSize
+        let width = !large ? 200 : Int(viewSize.width)
+        let height = !large ? 300 : Int(viewSize.height)
         return self.createImage(width: width, height: height)
     }
 

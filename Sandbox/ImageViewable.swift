@@ -4,7 +4,7 @@ public protocol ImageViewable
 {
     init(_ config: ContentView.Config)
     var  image: CGImage { get }
-    func update(maxSize: CGSize) -> CGImage
+    func update(viewSize: CGSize) -> CGImage
     func onTap(_ point: CGPoint)
     func onLongTap(_ point: CGPoint)
     func onDoubleTap(_ point: CGPoint?)

@@ -2,7 +2,7 @@ import SwiftUI
 
 public protocol ImageViewable
 {
-    init(_ settings: ContentView.Settings)
+    init(_ settings: ContentView.Config)
     var image: CGImage { get }
     func update(maxSize: CGSize) -> CGImage
     func onTap(_ point: CGPoint)

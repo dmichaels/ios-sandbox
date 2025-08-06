@@ -1,7 +1,7 @@
 import SwiftUI
 
 public struct SettingsView: View {
-    @EnvironmentObject private var settings: ContentView.Settings
+    @EnvironmentObject private var settings: ContentView.Config
     @State private var anotherSettingsView = false
     public var body: some View {
         Form {

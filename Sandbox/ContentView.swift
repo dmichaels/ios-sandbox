@@ -5,7 +5,7 @@ import SwiftUI
 //
 public struct ContentView: View
 {
-    public class Settings: ObservableObject {
+    public class Config: ObservableObject {
 
         @Published public var hideStatusBar: Bool = true
         @Published public var hideToolBar: Bool = false
@@ -16,10 +16,10 @@ public struct ContentView: View
         public func updateSettings() { self.versionSettings += 1 }
         public func updateImage()    { self.versionImage += 1 }
 
-        public static let Defaults: Settings = Settings()
+        public static let Defaults: Config = Config()
     }
 
-    @EnvironmentObject private var settings: ContentView.Settings
+    @EnvironmentObject private var settings: ContentView.Config
                        private var imageView: ImageViewable
     @State             private var image: CGImage                   = DummyImage.instance
     @State             private var imageAngle: Angle                = .zero
@@ -27,9 +27,9 @@ public struct ContentView: View
     @State             private var containerBackground: Color?      = Color.yellow
     @StateObject       private var orientation: OrientationObserver = OrientationObserver()
     @State             private var showSettingsView: Bool           = false
-    @State             private var hideStatusBar: Bool              = ContentView.Settings.Defaults.hideStatusBar
-    @State             private var hideToolBar: Bool                = ContentView.Settings.Defaults.hideToolBar
-    @State             private var ignoreSafeArea: Bool              = ContentView.Settings.Defaults.ignoreSafeArea
+    @State             private var hideStatusBar: Bool              = ContentView.Config.Defaults.hideStatusBar
+    @State             private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
+    @State             private var ignoreSafeArea: Bool              = ContentView.Config.Defaults.ignoreSafeArea
 
     internal init(_ imageView: ImageView) {
         self.imageView = imageView

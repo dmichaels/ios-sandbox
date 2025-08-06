@@ -73,7 +73,6 @@ public struct ContentView: View
                 .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
             }
             .safeArea(ignore: self.ignoreSafeArea)
-            // .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, showSettingsView: $showSettingsView)
             .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, toolBarView)
         }
         .statusBar(hidden: self.hideStatusBar)

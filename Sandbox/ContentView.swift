@@ -24,7 +24,7 @@ public struct ContentView: View
 
     @EnvironmentObject private var config: ContentView.Config
                        private var settingsView: SettingsView
-                       private var toolbarView: ToolbarView
+                       private var toolBarView: ToolbarView
                        private var imageView: ImageViewable
     @State             private var image: CGImage                   = DummyImage.instance
     @State             private var imageAngle: Angle                = .zero
@@ -36,10 +36,10 @@ public struct ContentView: View
     @State             private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
     @State             private var ignoreSafeArea: Bool             = ContentView.Config.Defaults.ignoreSafeArea
 
-    public init(imageView: ImageView, settingsView: SettingsView, toolbarView: ToolbarView) {
+    public init(imageView: ImageView, settingsView: SettingsView, toolBarView: ToolbarView) {
         self.imageView = imageView
         self.settingsView = settingsView
-        self.toolbarView = toolbarView
+        self.toolBarView = toolBarView
     }
 
     public var body: some View {
@@ -74,7 +74,7 @@ public struct ContentView: View
             }
             .safeArea(ignore: self.ignoreSafeArea)
             // .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, showSettingsView: $showSettingsView)
-            .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, toolbarView)
+            .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, toolBarView)
         }
         .statusBar(hidden: self.hideStatusBar)
         .onAppear    { self.orientation.register(self.updateOrientation) }
@@ -109,7 +109,7 @@ public struct ContentView: View
 
 extension View {
     @ViewBuilder
-    internal func toolBar(hidden: Bool, _ toolbarView: ToolbarView) -> some View {
-        if (hidden) { self } else { self.toolbar { toolbarView } }
+    internal func toolBar(hidden: Bool, _ toolBarView: ToolbarView) -> some View {
+        if (hidden) { self } else { self.toolbar { toolBarView } }
     }
 }

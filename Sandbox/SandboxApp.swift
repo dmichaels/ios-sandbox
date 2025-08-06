@@ -7,7 +7,7 @@ struct SandboxApp: App {
         WindowGroup {
             ContentView(imageView: ImageView(self.config),
                         settingsView: SettingsView(self.config),
-                        toolbarView: ToolbarView(self.config))
+                        toolBarView: ToolbarView(self.config))
                 .environmentObject(self.config)
         }
     }

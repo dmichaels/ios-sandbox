@@ -2,11 +2,13 @@ import SwiftUI
 
 @main
 struct SandboxApp: App {
-    var config: ContentView.Config = ContentView.Config()
+    let config: ContentView.Config = ContentView.Config()
     var body: some Scene {
         WindowGroup {
-            ContentView(imageView: ImageView(config), settingsView: SettingsView())
-                .environmentObject(config)
+            ContentView(imageView: ImageView(self.config),
+                        settingsView: SettingsView(self.config),
+                        toolbarView: ToolbarView(self.config))
+                .environmentObject(self.config)
         }
     }
 }

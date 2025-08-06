@@ -6,20 +6,25 @@ import SwiftUI
 public struct ContentView: View
 {
     public class Config: ObservableObject {
+
         @Published public var hideStatusBar: Bool = true
         @Published public var hideToolBar: Bool = false
         @Published public var ignoreSafeArea: Bool = false
-        @Published public var versionImage: Int = 0
-        @Published public var versionSettings: Int = 0
-        @Published public var versionSettingsView: Int = 0
-        public func updateImage()    { self.versionImage += 1 }
-        public func updateSettings() { self.versionSettings += 1 }
+
+        public func updateImage()      { self.versionImage += 1 }
+        public func updateSettings()   { self.versionSettings += 1 }
         public func showSettingsView() { self.versionSettingsView += 1 }
-        public static let Defaults: Config = Config()
+
+        @Published internal private(set) var versionImage: Int = 0
+        @Published internal private(set) var versionSettings: Int = 0
+        @Published internal private(set) var versionSettingsView: Int = 0
+
+        internal static let Defaults: Config = Config()
     }
 
     @EnvironmentObject private var config: ContentView.Config
                        private var settingsView: SettingsView
+                       private var toolbarView: ToolbarView
                        private var imageView: ImageViewable
     @State             private var image: CGImage                   = DummyImage.instance
     @State             private var imageAngle: Angle                = .zero
@@ -31,9 +36,10 @@ public struct ContentView: View
     @State             private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
     @State             private var ignoreSafeArea: Bool             = ContentView.Config.Defaults.ignoreSafeArea
 
-    internal init(imageView: ImageView, settingsView: SettingsView) {
+    public init(imageView: ImageView, settingsView: SettingsView, toolbarView: ToolbarView) {
         self.imageView = imageView
         self.settingsView = settingsView
+        self.toolbarView = toolbarView
     }
 
     public var body: some View {
@@ -67,7 +73,8 @@ public struct ContentView: View
                 .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
             }
             .safeArea(ignore: self.ignoreSafeArea)
-            .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, showSettingsView: $showSettingsView)
+            // .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, showSettingsView: $showSettingsView)
+            .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, toolbarView)
         }
         .statusBar(hidden: self.hideStatusBar)
         .onAppear    { self.orientation.register(self.updateOrientation) }
@@ -102,7 +109,7 @@ public struct ContentView: View
 
 extension View {
     @ViewBuilder
-    internal func toolBar(hidden: Bool, showSettingsView: Binding<Bool>) -> some View {
-        if (hidden) { self } else { self.toolbar { ToolbarView(showSettingsView: showSettingsView) } }
+    internal func toolBar(hidden: Bool, _ toolbarView: ToolbarView) -> some View {
+        if (hidden) { self } else { self.toolbar { toolbarView } }
     }
 }

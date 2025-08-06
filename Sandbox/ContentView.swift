@@ -22,7 +22,7 @@ public struct ContentView: View
         internal static let Defaults: Config = Config()
     }
 
-    @EnvironmentObject private var config: ContentView.Config
+    @ObservedObject    private var config: ContentView.Config
                        private var settingsView: SettingsView
                        private var toolBarView: ToolBarView
                        private var imageView: ImageViewable
@@ -36,7 +36,8 @@ public struct ContentView: View
     @State             private var hideToolBar: Bool                = ContentView.Config.Defaults.hideToolBar
     @State             private var ignoreSafeArea: Bool             = ContentView.Config.Defaults.ignoreSafeArea
 
-    public init(imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
+    public init(config: ContentView.Config, imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
+        self.config = config
         self.imageView = imageView
         self.settingsView = settingsView
         self.toolBarView = toolBarView

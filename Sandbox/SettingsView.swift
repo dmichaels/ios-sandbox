@@ -20,7 +20,7 @@ public struct SettingsView: View {
                 .onChange(of: ignoreSafeArea) { config.ignoreSafeArea = ignoreSafeArea }
             Toggle("Hide Status Bar", isOn: $hideStatusBar)
                 .onChange(of: hideStatusBar) { config.hideStatusBar = hideStatusBar }
-            Toggle("Hide Toolbar Bar", isOn: $hideToolBar)
+            Toggle("Hide Tool Bar", isOn: $hideToolBar)
                 .onChange(of: hideToolBar) { config.hideToolBar = hideToolBar }
             Section {
                 NavigationLink(destination: SettingsAdvancedView(), isActive: $anotherSettingsView) {

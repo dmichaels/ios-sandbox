@@ -46,9 +46,12 @@ public struct ImageContentView: View
         func onSwipeRight()
     }
 
+    public protocol SettingsViewable: View {}
+    public protocol ToolBarViewable: ToolbarContent {}
+
     @ObservedObject private var config: ImageContentView.Config
                     private var settingsView: SettingsView
-                    private var toolBarView: ToolBarView
+                    private var toolBarView: ((ImageContentView.Config) -> AnyView)?
                     private var imageView: ImageContentView.Viewable
     @State          private var image: CGImage                   = DummyImage.instance
     @State          private var imageAngle: Angle                = Angle.zero
@@ -61,7 +64,12 @@ public struct ImageContentView: View
     @State          private var ignoreSafeArea: Bool
 
     public init(config: ImageContentView.Config,
-                imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
+                imageView: ImageView,
+                settingsView: SettingsView,
+                toolBarView: ((ImageContentView.Config) -> AnyView)?,
+                // toolBarView: (((() -> Void)?) -> AnyView)?,
+                /* toolBarView: ToolBarView */ /* ,
+                makeToolBarView: @escaping () -> any ToolBarViewable */ ) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView
@@ -102,7 +110,11 @@ public struct ImageContentView: View
                 .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
             }
             .safeArea(ignore: self.ignoreSafeArea)
-            .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, toolBarView)
+            .toolbar {
+                if let toolBarView = self.toolBarView, !self.hideToolBar, !self.ignoreSafeArea {
+                    YToolBarView(config) { ToolbarItem(placement: .navigationBarLeading) { toolBarView(self.config) } }
+                }
+            }
         }
         .statusBar(hidden: self.hideStatusBar)
         .onAppear    { self.orientation.register(self.updateOrientation) }
@@ -137,10 +149,6 @@ public struct ImageContentView: View
 }
 
 extension View {
-    @ViewBuilder
-    internal func toolBar(hidden: Bool, _ toolBarView: ToolBarView) -> some View {
-        if (hidden) { self } else { self.toolbar { toolBarView } }
-    }
     @ViewBuilder
     internal func safeArea(ignore: Bool) -> some View {
         if (ignore) { self.ignoresSafeArea() } else { self }

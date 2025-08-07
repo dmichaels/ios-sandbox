@@ -109,7 +109,7 @@ public struct ImageContentView: View
             .safeArea(ignore: self.ignoreSafeArea)
             .toolbar {
                 if let toolBarView = self.toolBarView, !self.hideToolBar, !self.ignoreSafeArea {
-                    YToolBarView(config) { ToolbarItem(placement: .navigationBarLeading) { toolBarView(self.config) } }
+                    ToolBarView(config) { ToolbarItem(placement: .navigationBarLeading) { toolBarView(self.config) } }
                 }
             }
         }

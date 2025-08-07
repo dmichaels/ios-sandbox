@@ -66,10 +66,7 @@ public struct ImageContentView: View
     public init(config: ImageContentView.Config,
                 imageView: ImageView,
                 settingsView: SettingsView,
-                toolBarView: ((ImageContentView.Config) -> AnyView)?,
-                // toolBarView: (((() -> Void)?) -> AnyView)?,
-                /* toolBarView: ToolBarView */ /* ,
-                makeToolBarView: @escaping () -> any ToolBarViewable */ ) {
+                toolBarView: ((ImageContentView.Config) -> AnyView)?) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView

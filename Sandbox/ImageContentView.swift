@@ -94,8 +94,8 @@ public struct ImageContentView: View
                     onSwipeLeft:    { self.imageView.onSwipeLeft() },
                     onSwipeRight:   { self.imageView.onSwipeRight() }
                 )
-                .onAppear                                      { self.updateImage(geometry: containerGeometry) }
-                .onChange(of: containerGeometry.size)          { self.updateImage(geometry: containerGeometry) }
+                .onAppear                                      { self.updateImage(containerGeometry) }
+                .onChange(of: containerGeometry.size)          { self.updateImage(containerGeometry) }
                 .onChange(of: self.config.versionSettings)     { self.updateSettings() }
                 .onChange(of: self.config.versionSettingsView) { self.showSettingsView = true }
                 .onChange(of: self.config.versionImage)        { self.image = self.imageView.image }
@@ -109,7 +109,7 @@ public struct ImageContentView: View
         .onDisappear { self.orientation.deregister() }
     }
 
-    private func updateImage(geometry: GeometryProxy) {
+    private func updateImage(_ geometry: GeometryProxy) {
         self.containerSize = geometry.size
         self.imageView.update(viewSize: self.containerSize)
         self.image = self.imageView.image

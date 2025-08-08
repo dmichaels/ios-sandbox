@@ -46,9 +46,13 @@ public struct ImageContentView: View
         func onSwipeRight()
     }
 
+    public protocol SettingsViewable: View {}
+    public protocol ToolBarViewable: ToolbarContent {}
+
     @ObservedObject private var config: ImageContentView.Config
                     private var settingsView: SettingsView
-                    private var toolBarView: ToolBarView
+                    private var toolBarView: ((ImageContentView.Config) -> AnyView)?
+                    private var toolBarViewTrailing: ((ImageContentView.Config) -> AnyView)?
                     private var imageView: ImageContentView.Viewable
     @State          private var image: CGImage                   = DummyImage.instance
     @State          private var imageAngle: Angle                = Angle.zero
@@ -61,11 +65,15 @@ public struct ImageContentView: View
     @State          private var ignoreSafeArea: Bool
 
     public init(config: ImageContentView.Config,
-                imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
+                imageView: ImageView,
+                settingsView: SettingsView,
+                toolBarView: ((ImageContentView.Config) -> AnyView)?,
+                toolBarViewTrailing: ((ImageContentView.Config) -> AnyView)?) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView
         self.toolBarView = toolBarView
+        self.toolBarViewTrailing = toolBarViewTrailing
         self.hideStatusBar = config.hideStatusBar
         self.hideToolBar = config.hideToolBar
         self.ignoreSafeArea = config.ignoreSafeArea
@@ -94,22 +102,29 @@ public struct ImageContentView: View
                     onSwipeLeft:    { self.imageView.onSwipeLeft() },
                     onSwipeRight:   { self.imageView.onSwipeRight() }
                 )
-                .onAppear                                      { self.updateImage(containerGeometry) }
-                .onChange(of: containerGeometry.size)          { self.updateImage(containerGeometry) }
+                .onAppear                                      { self.updateImage(geometry: containerGeometry) }
+                .onChange(of: containerGeometry.size)          { self.updateImage(geometry: containerGeometry) }
                 .onChange(of: self.config.versionSettings)     { self.updateSettings() }
                 .onChange(of: self.config.versionSettingsView) { self.showSettingsView = true }
                 .onChange(of: self.config.versionImage)        { self.image = self.imageView.image }
                 .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
             }
             .safeArea(ignore: self.ignoreSafeArea)
-            .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, toolBarView)
+            .toolbar {
+                if let toolBarView = self.toolBarView, let toolBarViewTrailing = self.toolBarViewTrailing, !self.hideToolBar, !self.ignoreSafeArea {
+                    ToolBarView(config) {
+                        ToolbarItem(placement: .navigationBarLeading) { toolBarView(self.config) }
+                        ToolbarItem(placement: .navigationBarTrailing) { toolBarViewTrailing(self.config) }
+                    }
+                }
+            }
         }
         .statusBar(hidden: self.hideStatusBar)
         .onAppear    { self.orientation.register(self.updateOrientation) }
         .onDisappear { self.orientation.deregister() }
     }
 
-    private func updateImage(_ geometry: GeometryProxy) {
+    private func updateImage(geometry: GeometryProxy) {
         self.containerSize = geometry.size
         self.imageView.update(viewSize: self.containerSize)
         self.image = self.imageView.image
@@ -137,10 +152,6 @@ public struct ImageContentView: View
 }
 
 extension View {
-    @ViewBuilder
-    internal func toolBar(hidden: Bool, _ toolBarView: ToolBarView) -> some View {
-        if (hidden) { self } else { self.toolbar { toolBarView } }
-    }
     @ViewBuilder
     internal func safeArea(ignore: Bool) -> some View {
         if (ignore) { self.ignoresSafeArea() } else { self }

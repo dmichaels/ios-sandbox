@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct SettingsView: ImageContentView.SettingsViewable {
+public struct SettingsView: View {
 
     private let config: ImageContentView.Config
     @State private var hideStatusBar: Bool = false

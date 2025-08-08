@@ -1,13 +1,18 @@
 import SwiftUI
 
-public struct ToolBarView<Content: ToolbarContent>: ToolbarContent {
+public struct ToolBarView: ToolbarContent {
     private let config: ImageContentView.Config
-    private let content: Content
-    public init( _ config: ImageContentView.Config, @ToolbarContentBuilder content: () -> Content) {
-        self.config = config
-        self.content = content()
-    }
+    public init(_ config: ImageContentView.Config) { self.config = config }
     public var body: some ToolbarContent {
-        content
+        ToolbarItem(placement: .navigationBarLeading) {
+            Text("Home").font(.headline)
+        }
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                self.config.showSettingsView()
+            } label: {
+                Image(systemName: "gearshape")
+            }
+        }
     }
 }

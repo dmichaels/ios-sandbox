@@ -46,12 +46,9 @@ public struct ImageContentView: View
         func onSwipeRight()
     }
 
-    public protocol SettingsViewable: View {}
-    public protocol ToolBarViewable: ToolbarContent {}
-
     @ObservedObject private var config: ImageContentView.Config
                     private var settingsView: SettingsView
-                    private var toolBarView: ((ImageContentView.Config) -> AnyView)?
+                    private var toolBarView: ToolBarView
                     private var imageView: ImageContentView.Viewable
     @State          private var image: CGImage                   = DummyImage.instance
     @State          private var imageAngle: Angle                = Angle.zero
@@ -64,9 +61,7 @@ public struct ImageContentView: View
     @State          private var ignoreSafeArea: Bool
 
     public init(config: ImageContentView.Config,
-                imageView: ImageView,
-                settingsView: SettingsView,
-                toolBarView: ((ImageContentView.Config) -> AnyView)?) {
+                imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView
@@ -107,11 +102,7 @@ public struct ImageContentView: View
                 .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
             }
             .safeArea(ignore: self.ignoreSafeArea)
-            .toolbar {
-                if let toolBarView = self.toolBarView, !self.hideToolBar, !self.ignoreSafeArea {
-                    ToolBarView(config) { ToolbarItem(placement: .navigationBarLeading) { toolBarView(self.config) } }
-                }
-            }
+            .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, toolBarView)
         }
         .statusBar(hidden: self.hideStatusBar)
         .onAppear    { self.orientation.register(self.updateOrientation) }
@@ -146,6 +137,10 @@ public struct ImageContentView: View
 }
 
 extension View {
+    @ViewBuilder
+    internal func toolBar(hidden: Bool, _ toolBarView: ToolBarView) -> some View {
+        if (hidden) { self } else { self.toolbar { toolBarView } }
+    }
     @ViewBuilder
     internal func safeArea(ignore: Bool) -> some View {
         if (ignore) { self.ignoresSafeArea() } else { self }

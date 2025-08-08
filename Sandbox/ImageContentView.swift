@@ -47,12 +47,16 @@ public struct ImageContentView: View
     }
 
     public protocol SettingsViewable: View {}
-    public protocol ToolBarViewable: ToolbarContent {}
+    public typealias ToolBarViewable = AnyView
+    public typealias ToolBarViewMaker = (ImageContentView.Config) -> ToolBarViewable
+
+    public static func ToolBarViewBuilder(@ViewBuilder _ make: @escaping (Config) -> some View) -> (Config) -> AnyView {
+        { config in AnyView(make(config)) }
+    }
 
     @ObservedObject private var config: ImageContentView.Config
                     private var settingsView: SettingsView
-                    private var toolBarView: ((ImageContentView.Config) -> AnyView)?
-                    private var toolBarViewTrailing: ((ImageContentView.Config) -> AnyView)?
+                    private var toolBarViews: [AnyView]
                     private var imageView: ImageContentView.Viewable
     @State          private var image: CGImage                   = DummyImage.instance
     @State          private var imageAngle: Angle                = Angle.zero
@@ -64,16 +68,12 @@ public struct ImageContentView: View
     @State          private var hideToolBar: Bool
     @State          private var ignoreSafeArea: Bool
 
-    public init(config: ImageContentView.Config,
-                imageView: ImageView,
-                settingsView: SettingsView,
-                toolBarView: ((ImageContentView.Config) -> AnyView)?,
-                toolBarViewTrailing: ((ImageContentView.Config) -> AnyView)?) {
+    // public init(config: Config, imageView: ImageView, settingsView: SettingsView, toolBarViews: AnyView...) {
+    public init(config: Config, imageView: ImageView, settingsView: SettingsView, toolBarViews: [AnyView]) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView
-        self.toolBarView = toolBarView
-        self.toolBarViewTrailing = toolBarViewTrailing
+        self.toolBarViews = toolBarViews
         self.hideStatusBar = config.hideStatusBar
         self.hideToolBar = config.hideToolBar
         self.ignoreSafeArea = config.ignoreSafeArea
@@ -111,10 +111,24 @@ public struct ImageContentView: View
             }
             .safeArea(ignore: self.ignoreSafeArea)
             .toolbar {
-                if let toolBarView = self.toolBarView, let toolBarViewTrailing = self.toolBarViewTrailing, !self.hideToolBar, !self.ignoreSafeArea {
-                    ToolBarView(config) {
-                        ToolbarItem(placement: .navigationBarLeading) { toolBarView(self.config) }
-                        ToolbarItem(placement: .navigationBarTrailing) { toolBarViewTrailing(self.config) }
+                //
+                // This was a bit tricky; toolbars are treated a little specially/specifically by SwiftUI.
+                //
+                if (!self.hideToolBar && !self.ignoreSafeArea && (toolBarViews.count > 0)) {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        toolBarViews[0]
+                    }
+                    if (toolBarViews.count > 2) {
+                        ToolbarItem(placement: .navigation) {
+                            ForEach(1..<(toolBarViews.count - 1), id: \.self) { i in
+                                toolBarViews[i]
+                            }
+                        }
+                    }
+                    if (toolBarViews.count > 1) {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            toolBarViews[toolBarViews.count - 1]
+                        }
                     }
                 }
             }

@@ -1,5 +1,6 @@
 import SwiftUI
 
+/*
 public struct ToolBarView<Content: ToolbarContent>: ToolbarContent {
     private let config: ImageContentView.Config
     private let content: Content
@@ -11,3 +12,4 @@ public struct ToolBarView<Content: ToolbarContent>: ToolbarContent {
         content
     }
 }
+*/

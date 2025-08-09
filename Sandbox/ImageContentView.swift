@@ -48,10 +48,14 @@ public struct ImageContentView: View
 
     public protocol SettingsViewable: View {}
     public typealias ToolBarViewable = AnyView
-    public typealias ToolBarViewMaker = (ImageContentView.Config) -> ToolBarViewable
+    // public typealias ToolBarViewable = [AnyView]
 
     public static func ToolBarViewBuilder(@ViewBuilder _ make: @escaping (Config) -> some View) -> (Config) -> AnyView {
         { config in AnyView(make(config)) }
+    }
+
+    public static func ToolBarView(_ toolBarViews: [(Config) -> AnyView], _ config: Config) -> [AnyView] {
+        return toolBarViews.map { item in item(config) }
     }
 
     @ObservedObject private var config: ImageContentView.Config

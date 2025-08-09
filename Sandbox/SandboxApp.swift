@@ -25,4 +25,15 @@ struct SandboxApp: App {
             }
         ].map { item in item(config) }
     }
+
+    func ToolBarViews2(config: ImageContentView.Config) -> [AnyView] {
+        return ImageContentView.ToolBarView([
+            ImageContentView.ToolBarViewBuilder { _ in
+                Text("hOMe")
+            },
+            ImageContentView.ToolBarViewBuilder { config in
+                Button { config.showSettingsView() } label: { Image(systemName: "gearshape") }
+            }
+        ], config)
+    }
 }

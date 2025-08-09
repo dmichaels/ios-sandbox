@@ -6,7 +6,7 @@ import Utils
 //
 public struct ImageContentView: View
 {
-    public class Config: ObservableObject
+    public class Config: ObservableObject, @unchecked Sendable
     {
         public var hideStatusBar: Bool  = false
         public var hideToolBar: Bool    = false
@@ -78,7 +78,7 @@ public struct ImageContentView: View
     @State          private var hideToolBar: Bool
     @State          private var ignoreSafeArea: Bool
 
-    public init(config: Config, imageView: ImageView, settingsView: SettingsViewable, toolBarViews: ToolBarViewables) {
+    public init(config: Config, imageView: Viewable, settingsView: SettingsViewable, toolBarViews: ToolBarViewables) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView

@@ -1,4 +1,5 @@
 import SwiftUI
+import Utils
 
 @main
 struct SandboxApp: App {

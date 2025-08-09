@@ -48,16 +48,22 @@ public struct ImageContentView: View
 
     public protocol SettingsViewable: View {}
 
-    public static func ToolBarView(_ config: Config, _ toolBarViews: ((Config) -> AnyView)...) -> [AnyView] {
+    public typealias ToolBarItemBuilder = (ImageContentView.Config) -> AnyView
+
+    public static func ToolBarView(_ config: Config, _ toolBarViews: ToolBarItemBuilder...) -> [AnyView] {
         return toolBarViews.map { item in item(config) }
     }
 
-    public static func ToolBarItem(@ViewBuilder _ make: @escaping (Config) -> some View) -> (Config) -> AnyView {
+    public static func ToolBarView(_ config: Config, _ toolBarViews: [ToolBarItemBuilder]) -> [AnyView] {
+        return toolBarViews.map { item in item(config) }
+    }
+
+    public static func ToolBarItem(@ViewBuilder _ make: @escaping (Config) -> some View) -> ToolBarItemBuilder {
         { config in AnyView(make(config)) }
     }
 
     @ObservedObject private var config: ImageContentView.Config
-                    private var settingsView: SettingsView
+                    private var settingsView: SettingsViewable
                     private var toolBarViews: [AnyView]
                     private var imageView: ImageContentView.Viewable
     @State          private var image: CGImage                   = DummyImage.instance
@@ -70,7 +76,7 @@ public struct ImageContentView: View
     @State          private var hideToolBar: Bool
     @State          private var ignoreSafeArea: Bool
 
-    public init(config: Config, imageView: ImageView, settingsView: SettingsView, toolBarViews: [AnyView]) {
+    public init(config: Config, imageView: ImageView, settingsView: SettingsViewable, toolBarViews: [AnyView]) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView
@@ -108,7 +114,7 @@ public struct ImageContentView: View
                 .onChange(of: self.config.versionSettings)     { self.updateSettings() }
                 .onChange(of: self.config.versionSettingsView) { self.showSettingsView = true }
                 .onChange(of: self.config.versionImage)        { self.image = self.imageView.image }
-                .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
+                .navigationDestination(isPresented: $showSettingsView) { AnyView(self.settingsView) }
             }
             .safeArea(ignore: self.ignoreSafeArea)
             .toolbar {

@@ -1,10 +1,12 @@
 import SwiftUI
 import Utils
 
+// public typealias ImageContentView = XImageContentView
+
 // Example (with help from ChatGPT) relevant to simplifying ios-lifegame setup 2027-07-31 ...
 // Went through lots of iterations; this is the simplest we came up with; lots of subtleties.
 //
-public struct ImageContentView: View
+public struct XImageContentView: View
 {
     public class Config: ObservableObject, @unchecked Sendable
     {
@@ -31,7 +33,7 @@ public struct ImageContentView: View
 
     public protocol Viewable
     {
-        init(_ config: ImageContentView.Config)
+        init(_ config: Config)
         var  image: CGImage { get }
         func update(viewSize: CGSize)
         func onTap(_ point: CGPoint)
@@ -48,7 +50,7 @@ public struct ImageContentView: View
 
     public protocol SettingsViewable: View {}
 
-    public typealias ToolBarItemBuilder = (ImageContentView.Config) -> AnyView
+    public typealias ToolBarItemBuilder = (Config) -> AnyView
 
     public static func ToolBarItem(@ViewBuilder _ make: @escaping (Config) -> some View) -> ToolBarItemBuilder {
         { config in AnyView(make(config)) }
@@ -64,10 +66,10 @@ public struct ImageContentView: View
 
     public typealias ToolBarViewables = [AnyView]
 
-    @ObservedObject private var config: ImageContentView.Config
+    @ObservedObject private var config: Config
                     private var settingsView: any SettingsViewable
                     private var toolBarViews: ToolBarViewables
-                    private var imageView: ImageContentView.Viewable
+                    private var imageView: Viewable
     @State          private var image: CGImage                   = DummyImage.instance
     @State          private var imageAngle: Angle                = Angle.zero
     @State          private var containerSize: CGSize            = CGSize.zero
@@ -181,7 +183,7 @@ extension View {
     }
 }
 
-extension ImageContentView.Viewable {
+extension XImageContentView.Viewable {
     public var  image: CGImage { DummyImage.instance }
     public func update(viewSize: CGSize) {}
     public func onTap(_ point: CGPoint) {}

@@ -1,4 +1,5 @@
 import SwiftUI
+import Utils
 
 public func ToolBarViews(_ config: ImageContentView.Config) -> ImageContentView.ToolBarViewables {
     return ImageContentView.ToolBarViewable(config, 

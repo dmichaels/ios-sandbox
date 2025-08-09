@@ -14,7 +14,8 @@ public class ImageView: ImageContentView.Viewable
         self.backgroundColor = UIColor.red.cgColor
     }
 
-    public func update(viewSize: CGSize) {
+    public func update(viewSize: CGSize /*, color: CGColor? = nil */) {
+        // self.backgroundColor = color ?? self.backgroundColor
         self.image = self.createImage(viewSize: viewSize, large: self.imageSizeLarge)
     }
 

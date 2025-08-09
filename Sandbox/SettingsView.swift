@@ -3,6 +3,7 @@ import Utils
 
 public struct SettingsView: ImageContentView.SettingsViewable {
 
+    @EnvironmentObject var settings: Settings
     private let config: ImageContentView.Config
     @State private var hideStatusBar: Bool = false
     @State private var hideToolBar: Bool = false

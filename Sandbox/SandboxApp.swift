@@ -10,6 +10,7 @@ struct SandboxApp: App {
                              imageView: ImageView(self.config),
                              settingsView: SettingsView(self.config),
                              toolBarViews: ToolBarViews(self.config))
+            .environmentObject(Settings())
         }
     }
 }

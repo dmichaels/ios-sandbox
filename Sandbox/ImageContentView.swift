@@ -50,6 +50,10 @@ public struct ImageContentView: View
 
     public typealias ToolBarItemBuilder = (ImageContentView.Config) -> AnyView
 
+    public static func ToolBarItem(@ViewBuilder _ make: @escaping (Config) -> some View) -> ToolBarItemBuilder {
+        { config in AnyView(make(config)) }
+    }
+
     public static func ToolBarView(_ config: Config, _ toolBarViews: ToolBarItemBuilder...) -> [AnyView] {
         return toolBarViews.map { item in item(config) }
     }
@@ -58,12 +62,8 @@ public struct ImageContentView: View
         return toolBarViews.map { item in item(config) }
     }
 
-    public static func ToolBarItem(@ViewBuilder _ make: @escaping (Config) -> some View) -> ToolBarItemBuilder {
-        { config in AnyView(make(config)) }
-    }
-
     @ObservedObject private var config: ImageContentView.Config
-                    private var settingsView: SettingsViewable
+                    private var settingsView: any SettingsViewable
                     private var toolBarViews: [AnyView]
                     private var imageView: ImageContentView.Viewable
     @State          private var image: CGImage                   = DummyImage.instance

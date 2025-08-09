@@ -46,9 +46,19 @@ public struct ImageContentView: View
         func onSwipeRight()
     }
 
+    public protocol SettingsViewable: View {}
+
+    public static func ToolBarView(_ config: Config, _ toolBarViews: ((Config) -> AnyView)...) -> [AnyView] {
+        return toolBarViews.map { item in item(config) }
+    }
+
+    public static func ToolBarItem(@ViewBuilder _ make: @escaping (Config) -> some View) -> (Config) -> AnyView {
+        { config in AnyView(make(config)) }
+    }
+
     @ObservedObject private var config: ImageContentView.Config
                     private var settingsView: SettingsView
-                    private var toolBarView: ToolBarView
+                    private var toolBarViews: [AnyView]
                     private var imageView: ImageContentView.Viewable
     @State          private var image: CGImage                   = DummyImage.instance
     @State          private var imageAngle: Angle                = Angle.zero
@@ -60,12 +70,11 @@ public struct ImageContentView: View
     @State          private var hideToolBar: Bool
     @State          private var ignoreSafeArea: Bool
 
-    public init(config: ImageContentView.Config,
-                imageView: ImageView, settingsView: SettingsView, toolBarView: ToolBarView) {
+    public init(config: Config, imageView: ImageView, settingsView: SettingsView, toolBarViews: [AnyView]) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView
-        self.toolBarView = toolBarView
+        self.toolBarViews = toolBarViews
         self.hideStatusBar = config.hideStatusBar
         self.hideToolBar = config.hideToolBar
         self.ignoreSafeArea = config.ignoreSafeArea
@@ -94,22 +103,43 @@ public struct ImageContentView: View
                     onSwipeLeft:    { self.imageView.onSwipeLeft() },
                     onSwipeRight:   { self.imageView.onSwipeRight() }
                 )
-                .onAppear                                      { self.updateImage(containerGeometry) }
-                .onChange(of: containerGeometry.size)          { self.updateImage(containerGeometry) }
+                .onAppear                                      { self.updateImage(geometry: containerGeometry) }
+                .onChange(of: containerGeometry.size)          { self.updateImage(geometry: containerGeometry) }
                 .onChange(of: self.config.versionSettings)     { self.updateSettings() }
                 .onChange(of: self.config.versionSettingsView) { self.showSettingsView = true }
                 .onChange(of: self.config.versionImage)        { self.image = self.imageView.image }
                 .navigationDestination(isPresented: $showSettingsView) { self.settingsView }
             }
             .safeArea(ignore: self.ignoreSafeArea)
-            .toolBar(hidden: self.hideToolBar || self.ignoreSafeArea, toolBarView)
+            .toolbar {
+                //
+                // This was a bit tricky; toolbars are treated a little specially/specifically by SwiftUI.
+                //
+                if (!self.hideToolBar && !self.ignoreSafeArea && (toolBarViews.count > 0)) {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        toolBarViews[0]
+                    }
+                    if (toolBarViews.count > 2) {
+                        ToolbarItem(placement: .navigation) {
+                            ForEach(1..<(toolBarViews.count - 1), id: \.self) { i in
+                                toolBarViews[i]
+                            }
+                        }
+                    }
+                    if (toolBarViews.count > 1) {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            toolBarViews[toolBarViews.count - 1]
+                        }
+                    }
+                }
+            }
         }
         .statusBar(hidden: self.hideStatusBar)
         .onAppear    { self.orientation.register(self.updateOrientation) }
         .onDisappear { self.orientation.deregister() }
     }
 
-    private func updateImage(_ geometry: GeometryProxy) {
+    private func updateImage(geometry: GeometryProxy) {
         self.containerSize = geometry.size
         self.imageView.update(viewSize: self.containerSize)
         self.image = self.imageView.image
@@ -137,10 +167,6 @@ public struct ImageContentView: View
 }
 
 extension View {
-    @ViewBuilder
-    internal func toolBar(hidden: Bool, _ toolBarView: ToolBarView) -> some View {
-        if (hidden) { self } else { self.toolbar { toolBarView } }
-    }
     @ViewBuilder
     internal func safeArea(ignore: Bool) -> some View {
         if (ignore) { self.ignoresSafeArea() } else { self }

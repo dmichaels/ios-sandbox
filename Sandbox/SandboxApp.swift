@@ -9,7 +9,7 @@ struct SandboxApp: App {
                 config: self.config,
                 imageView: ImageView(self.config),
                 settingsView: SettingsView(self.config),
-                toolBarViews: ImageContentView.ToolBarView(config,
+                toolBarViews: ImageContentView.ToolBarView(self.config,
                     ImageContentView.ToolBarItem { _ in
                         Text("Home")
                     },

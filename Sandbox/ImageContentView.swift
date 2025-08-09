@@ -54,11 +54,11 @@ public struct ImageContentView: View
         { config in AnyView(make(config)) }
     }
 
-    public static func ToolBarView(_ config: Config, _ toolBarViews: ToolBarItemBuilder...) -> [AnyView] {
+    public static func ToolBarViewable(_ config: Config, _ toolBarViews: ToolBarItemBuilder...) -> [AnyView] {
         return toolBarViews.map { item in item(config) }
     }
 
-    public static func ToolBarView(_ config: Config, _ toolBarViews: [ToolBarItemBuilder]) -> [AnyView] {
+    public static func ToolBarViewable(_ config: Config, _ toolBarViews: [ToolBarItemBuilder]) -> [AnyView] {
         return toolBarViews.map { item in item(config) }
     }
 

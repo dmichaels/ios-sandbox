@@ -54,17 +54,19 @@ public struct ImageContentView: View
         { config in AnyView(make(config)) }
     }
 
-    public static func ToolBarViewable(_ config: Config, _ toolBarViews: ToolBarItemBuilder...) -> [AnyView] {
+    public static func ToolBarViewable(_ config: Config, _ toolBarViews: ToolBarItemBuilder...) -> ToolBarViewables {
         return toolBarViews.map { item in item(config) }
     }
 
-    public static func ToolBarViewable(_ config: Config, _ toolBarViews: [ToolBarItemBuilder]) -> [AnyView] {
+    public static func ToolBarViewable(_ config: Config, _ toolBarViews: [ToolBarItemBuilder]) -> ToolBarViewables {
         return toolBarViews.map { item in item(config) }
     }
+
+    public typealias ToolBarViewables = [AnyView]
 
     @ObservedObject private var config: ImageContentView.Config
                     private var settingsView: any SettingsViewable
-                    private var toolBarViews: [AnyView]
+                    private var toolBarViews: ToolBarViewables
                     private var imageView: ImageContentView.Viewable
     @State          private var image: CGImage                   = DummyImage.instance
     @State          private var imageAngle: Angle                = Angle.zero
@@ -76,7 +78,7 @@ public struct ImageContentView: View
     @State          private var hideToolBar: Bool
     @State          private var ignoreSafeArea: Bool
 
-    public init(config: Config, imageView: ImageView, settingsView: SettingsViewable, toolBarViews: [AnyView]) {
+    public init(config: Config, imageView: ImageView, settingsView: SettingsViewable, toolBarViews: ToolBarViewables) {
         self.config = config
         self.imageView = imageView
         self.settingsView = settingsView

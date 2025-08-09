@@ -8,7 +8,7 @@ struct SandboxApp: App {
             ImageContentView(config: self.config,
                              imageView: ImageView(self.config),
                              settingsView: SettingsView(self.config),
-                             toolBarViews: ToolBarView(self.config))
+                             toolBarViews: ToolBarViews(self.config))
         }
     }
 }

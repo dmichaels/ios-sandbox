@@ -58,6 +58,10 @@ public struct ImageContentView: View
         return toolBarViews.map { item in item(config) }
     }
 
+    public static func ToolBarView3(_ config: Config, _ toolBarViews: ((Config) -> AnyView)...) -> [AnyView] {
+        return toolBarViews.map { item in item(config) }
+    }
+
     @ObservedObject private var config: ImageContentView.Config
                     private var settingsView: SettingsView
                     private var toolBarViews: [AnyView]

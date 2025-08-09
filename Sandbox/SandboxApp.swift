@@ -7,11 +7,21 @@ struct SandboxApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ImageContentView(config: self.config,
-                             imageView: ImageView(self.config),
-                             settingsView: SettingsView(self.config),
-                             // toolBarViews: ToolBarViewLeading(self.config), ToolBarViewTrailing(self.config))
-                             toolBarViews: ToolBarViews(config: config))
+            ImageContentView(
+                config: self.config,
+                imageView: ImageView(self.config),
+                settingsView: SettingsView(self.config),
+                // toolBarViews: ToolBarViewLeading(self.config), ToolBarViewTrailing(self.config))
+                // toolBarViews: ToolBarViews3(config: config)
+                toolBarViews: ImageContentView.ToolBarView3(config,
+                    ImageContentView.ToolBarViewBuilder { _ in
+                        Text("Home3")
+                    },
+                    ImageContentView.ToolBarViewBuilder { config in
+                        Button { config.showSettingsView() } label: { Image(systemName: "gearshape") }
+                    }
+                )
+            )
         }
     }
 
@@ -29,11 +39,22 @@ struct SandboxApp: App {
     func ToolBarViews2(config: ImageContentView.Config) -> [AnyView] {
         return ImageContentView.ToolBarView([
             ImageContentView.ToolBarViewBuilder { _ in
-                Text("hOMe")
+                Text("Home2")
             },
             ImageContentView.ToolBarViewBuilder { config in
                 Button { config.showSettingsView() } label: { Image(systemName: "gearshape") }
             }
         ], config)
+    }
+
+    func ToolBarViews3(config: ImageContentView.Config) -> [AnyView] {
+        return ImageContentView.ToolBarView3(config,
+            ImageContentView.ToolBarViewBuilder { _ in
+                Text("Home3")
+            },
+            ImageContentView.ToolBarViewBuilder { config in
+                Button { config.showSettingsView() } label: { Image(systemName: "gearshape") }
+            }
+        )
     }
 }

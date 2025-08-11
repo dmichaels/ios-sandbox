@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		989742E22E43CB6000EB6D2F /* Utils in Frameworks */ = {isa = PBXBuildFile; productRef = 989742E12E43CB6000EB6D2F /* Utils */; };
+		989744172E4A52D600EB6D2F /* CellGridView in Frameworks */ = {isa = PBXBuildFile; productRef = 989744162E4A52D600EB6D2F /* CellGridView */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				989742E22E43CB6000EB6D2F /* Utils in Frameworks */,
+				989744172E4A52D600EB6D2F /* CellGridView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +120,7 @@
 			name = Sandbox;
 			packageProductDependencies = (
 				989742E12E43CB6000EB6D2F /* Utils */,
+				989744162E4A52D600EB6D2F /* CellGridView */,
 			);
 			productName = Sandbox;
 			productReference = 989741BC2E3F9B5100EB6D2F /* Sandbox.app */;
@@ -203,6 +206,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				989742E02E43CB6000EB6D2F /* XCRemoteSwiftPackageReference "ios-utils" */,
+				989744152E4A52D600EB6D2F /* XCRemoteSwiftPackageReference "ios-cellgridview" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 989741BD2E3F9B5100EB6D2F /* Products */;
@@ -414,6 +418,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -442,6 +447,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -577,6 +583,14 @@
 				kind = branch;
 			};
 		};
+		989744152E4A52D600EB6D2F /* XCRemoteSwiftPackageReference "ios-cellgridview" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dmichaels/ios-cellgridview.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -584,6 +598,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 989742E02E43CB6000EB6D2F /* XCRemoteSwiftPackageReference "ios-utils" */;
 			productName = Utils;
+		};
+		989744162E4A52D600EB6D2F /* CellGridView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 989744152E4A52D600EB6D2F /* XCRemoteSwiftPackageReference "ios-cellgridview" */;
+			productName = CellGridView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

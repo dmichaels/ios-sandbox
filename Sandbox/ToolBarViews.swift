@@ -1,8 +1,8 @@
 import SwiftUI
 import Utils
 
-public func ToolBarViews(_ config: ImageContentView.Config) -> ImageContentView.ToolBarViewables {
-    return ImageContentView.ToolBarViewable(config, 
+public func ToolBarViews(settings: Settings) -> ImageContentView.ToolBarViewables {
+    return ImageContentView.ToolBarViewable(settings.config, 
         ImageContentView.ToolBarItem { _ in
             Text("Home")
         },

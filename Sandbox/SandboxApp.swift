@@ -3,14 +3,18 @@ import Utils
 
 @main
 struct SandboxApp: App {
-    private let config: ImageContentView.Config = ImageContentView.Config(ignoreSafeArea: false)
+    private let settings: Settings = Settings(
+        ImageContentView.Config(
+            ignoreSafeArea: false,
+            background: Colour.gray
+        )
+    )
     var body: some Scene {
         WindowGroup {
-            ImageContentView(config: self.config,
-                             imageView: ImageView(self.config),
-                             settingsView: SettingsView(self.config),
-                             toolBarViews: ToolBarViews(self.config))
-                .environmentObject(Settings())
+            ImageContentView(config: self.settings.config,
+                             imageView: ImageView(settings: self.settings),
+                             settingsView: SettingsView(settings: self.settings),
+                             toolBarViews: ToolBarViews(settings: self.settings))
         }
     }
 }

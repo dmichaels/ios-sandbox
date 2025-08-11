@@ -8,6 +8,7 @@ public class ImageView: ImageContentView.Viewable
     private var backgroundColor: CGColor
     private var viewSize: CGSize = CGSize.zero
     private var imageSizeLarge = false
+    private var zoomStart: CGSize? = nil
 
     public init(settings: Settings) {
         self.settings = settings
@@ -31,14 +32,18 @@ public class ImageView: ImageContentView.Viewable
     }
 
     public func onZoom(_ zoomFactor: CGFloat) {
-        var width: Int = Int(min(200 * zoomFactor, viewSize.width))
-        var height: Int = Int(min(300 * zoomFactor, viewSize.height))
+        if (self.zoomStart == nil) {
+            self.zoomStart = CGSize(width: image.width, height: image.height)
+        }
+        let width: Int = (CGFloat(self.zoomStart!.width) * zoomFactor).clampedInt(1.0...viewSize.width)
+        let height: Int = (CGFloat(self.zoomStart!.height) * zoomFactor).clampedInt(1.0...viewSize.height)
         self.image = self.createImage(width: width, height: height)
         self.settings.contentView.updateImage()
     }
 
     public func onZoomEnd(_ zoomFactor: CGFloat) {
         self.onZoom(zoomFactor)
+        self.zoomStart = nil
     }
 
     public func onSwipeLeft() {
@@ -64,11 +69,11 @@ public class ImageView: ImageContentView.Viewable
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         context.translateBy(x: 0, y: CGFloat(height))
         context.scaleBy(x: 1.0, y: -1.0)
-        // context.setFillColor(self.settings.squareColor.uicolor.cgColor)
         context.setFillColor(self.settings.squareColor.cgcolor)
         let innerRectangleWidth: Int = self.settings.large ? 100 : 20
         let innerRectangleHeight: Int = self.settings.large ? 150 : 30
-        context.fill(CGRect(x: (width - innerRectangleWidth) / 2, y: (height - innerRectangleHeight) / 2, width: innerRectangleWidth, height: innerRectangleHeight))
+        context.fill(CGRect(x: (width - innerRectangleWidth) / 2, y: (height - innerRectangleHeight) / 2,
+                            width: innerRectangleWidth, height: innerRectangleHeight))
         return context.makeImage()!
     }
 }

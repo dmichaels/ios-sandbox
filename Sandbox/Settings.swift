@@ -1,17 +1,13 @@
 import SwiftUI
 import Utils
 
-public class Settings: ObservableObject
+public class Settings: ObservableObject, @unchecked Sendable
 {
-    public init(_ contentView: ImageContentView.Config) {
-        self.config = contentView
+    public init(contentView: ImageContentView.Config) {
         self.contentView = contentView
     }
 
-    @Published public var config: ImageContentView.Config
-    @Published public var contentView: ImageContentView.Config
-    @Published public var squareColor: Colour = Colour.magenta
-    @Published public var large: Bool = false
-
-    // public static let Defaults: Settings = Settings()
+    public var contentView: ImageContentView.Config
+    public var squareColor: Colour = Colour.magenta
+    public var large: Bool = false
 }

@@ -4,7 +4,6 @@ import Utils
 public struct SettingsView: ImageContentView.SettingsViewable {
 
     @ObservedObject var settings: Settings
-    // @State private var settings: Settings
     @State private var hideStatusBar: Bool = false
     @State private var hideToolBar: Bool = false
     @State private var ignoreSafeArea: Bool = false
@@ -12,28 +11,20 @@ public struct SettingsView: ImageContentView.SettingsViewable {
     @State private var background: Color = .white
     @State private var squareColor: Color = .white
 
-    /*
-    init(_ settings: Settings) {
-        // self.settings = settings
-    }
-    */
-
     public var body: some View {
         Form {
             Text("Settings ...")
-            Toggle("Ignore Safe Area", isOn: $settings.config.ignoreSafeArea)
-            Toggle("Hide Status Bar", isOn: $settings.config.hideStatusBar)
-            Toggle("Hide Tool Bar", isOn: $settings.config.hideToolBar)
+            Toggle("Ignore Safe Area", isOn: $settings.contentView.ignoreSafeArea)
+            Toggle("Hide Status Bar", isOn: $settings.contentView.hideStatusBar)
+            Toggle("Hide Tool Bar", isOn: $settings.contentView.hideToolBar)
             Toggle("Large", isOn: $settings.large)
             HStack {
                 IconLabel("Background", "COLOR")
-                ColorPicker("", selection: $background)
-                    .onChange(of: background) { value in settings.config.background = Colour(value) }
+                ColorPicker("", selection: $settings.contentView.background.picker)
             }
             HStack {
-                IconLabel("Square Color", "COLOR")
-                ColorPicker("", selection: $squareColor)
-                    .onChange(of: squareColor) { value in settings.squareColor = Colour(value) }
+                IconLabel("Square Color", "cOLOR")
+                ColorPicker("", selection: $settings.squareColor.picker)
             }
             Section {
                 NavigationLink(destination: SettingsAdvancedView(), isActive: $anotherSettingsView) {
@@ -43,15 +34,15 @@ public struct SettingsView: ImageContentView.SettingsViewable {
         }
         .navigationTitle("Settings")
         .onAppear {
-            self.ignoreSafeArea = settings.config.ignoreSafeArea
-            self.hideToolBar = settings.config.hideToolBar
-            self.hideStatusBar = settings.config.hideStatusBar
-            self.background = settings.config.background.color
+            self.ignoreSafeArea = settings.contentView.ignoreSafeArea
+            self.hideToolBar = settings.contentView.hideToolBar
+            self.hideStatusBar = settings.contentView.hideStatusBar
+            self.background = settings.contentView.background.color
             self.squareColor = settings.squareColor.color
         }
         .onDisappear {
             if (!self.anotherSettingsView) {
-                self.settings.config.updateSettings()
+                settings.contentView.updateSettings()
             }
         }
     }
@@ -63,12 +54,5 @@ public struct SettingsAdvancedView: View {
             Text("Advanced Settings ...")
         }
         .navigationTitle("Advanced")
-    }
-}
-
-private extension ImageContentView.Config {
-    var backgroundInternal: Color {
-        get { Color(self.background) }
-        set { self.background = Colour(newValue) }
     }
 }

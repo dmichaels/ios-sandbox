@@ -21,20 +21,20 @@ public class ImageView: ImageContentView.Viewable
     public func onTap(_ point: CGPoint) {
         self.imageSizeLarge.toggle()
         self.image = self.createImage(viewSize: self.viewSize, large: self.imageSizeLarge)
-        self.settings.config.updateImage()
+        self.settings.contentView.updateImage()
     }
 
     public func onLongTap(_ point: CGPoint) {
         self.backgroundColor = UIColor.cyan.cgColor
         self.image = self.createImage()
-        self.settings.config.updateImage()
+        self.settings.contentView.updateImage()
     }
 
     public func onZoom(_ zoomFactor: CGFloat) {
         var width: Int = Int(min(200 * zoomFactor, viewSize.width))
         var height: Int = Int(min(300 * zoomFactor, viewSize.height))
         self.image = self.createImage(width: width, height: height)
-        self.settings.config.updateImage()
+        self.settings.contentView.updateImage()
     }
 
     public func onZoomEnd(_ zoomFactor: CGFloat) {
@@ -42,7 +42,7 @@ public class ImageView: ImageContentView.Viewable
     }
 
     public func onSwipeLeft() {
-        self.settings.config.showSettingsView()
+        self.settings.contentView.showSettingsView()
     }
 
     private func createImage(viewSize: CGSize, large: Bool = false) -> CGImage {

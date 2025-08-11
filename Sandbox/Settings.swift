@@ -9,6 +9,6 @@ public class Settings: ObservableObject
 
     public var contentView: ImageContentView.Config
     public var squareColor: Colour = Colour.red
+    public var squareSizeSmall: Bool = true
     public var innerSquareColor: Colour = Colour.magenta
-    public var large: Bool = false
 }

@@ -6,7 +6,6 @@ public class ImageView: ImageContentView.Viewable
     private var settings: Settings!
     public private(set) var image: CGImage = DummyImage.instance
     private var viewSize: CGSize = CGSize.zero
-    private var imageSizeLarge = false
     private var zoomStart: CGSize? = nil
 
     public init(settings: Settings) {
@@ -14,12 +13,12 @@ public class ImageView: ImageContentView.Viewable
     }
 
     public func update(viewSize: CGSize) {
-        self.image = self.createImage(viewSize: viewSize, large: self.imageSizeLarge)
+        self.image = self.createImage(viewSize: viewSize)
     }
 
     public func onTap(_ point: CGPoint) {
-        self.imageSizeLarge.toggle()
-        self.image = self.createImage(viewSize: self.viewSize, large: self.imageSizeLarge)
+        self.settings.squareSizeSmall.toggle()
+        self.image = self.createImage(viewSize: self.viewSize)
         self.settings.contentView.updateImage()
     }
 
@@ -48,16 +47,17 @@ public class ImageView: ImageContentView.Viewable
         self.settings.contentView.showSettingsView()
     }
 
-    private func createImage(viewSize: CGSize, large: Bool = false) -> CGImage {
+    private func createImage(viewSize: CGSize) -> CGImage {
         self.viewSize = viewSize
-        let width = !large ? 200 : Int(viewSize.width)
-        let height = !large ? 300 : Int(viewSize.height)
+        let width = self.settings.squareSizeSmall ? 200 : Int(viewSize.width)
+        let height = self.settings.squareSizeSmall ? 300 : Int(viewSize.height)
         return self.createImage(width: width, height: height)
     }
 
     private func createImage(width: Int? = nil, height: Int? = nil) -> CGImage {
         let width: Int = width ?? self.image.width
         let height: Int = height ?? self.image.height
+        guard width > 0, height > 0 else { return DummyImage.instance }
         let context = CGContext(
             data: nil, width: width, height: height,
             bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
@@ -68,8 +68,8 @@ public class ImageView: ImageContentView.Viewable
         context.translateBy(x: 0, y: CGFloat(height))
         context.scaleBy(x: 1.0, y: -1.0)
         context.setFillColor(self.settings.innerSquareColor.cgcolor)
-        let innerRectangleWidth: Int = self.settings.large ? 100 : 20
-        let innerRectangleHeight: Int = self.settings.large ? 150 : 30
+        let innerRectangleWidth: Int = width / 3
+        let innerRectangleHeight: Int = height / 3
         context.fill(CGRect(x: (width - innerRectangleWidth) / 2, y: (height - innerRectangleHeight) / 2,
                             width: innerRectangleWidth, height: innerRectangleHeight))
         return context.makeImage()!

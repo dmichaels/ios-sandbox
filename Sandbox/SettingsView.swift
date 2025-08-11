@@ -12,7 +12,7 @@ public struct SettingsView: ImageContentView.SettingsViewable {
             Toggle("Ignore Safe Area", isOn: $settings.contentView.ignoreSafeArea)
             Toggle("Hide Status Bar", isOn: $settings.contentView.hideStatusBar)
             Toggle("Hide Tool Bar", isOn: $settings.contentView.hideToolBar)
-            Toggle("Large", isOn: $settings.large)
+            Toggle("Small Size", isOn: $settings.squareSizeSmall)
             HStack {
                 IconLabel("Background", "COLOR")
                 ColorPicker("", selection: $settings.contentView.background.picker)

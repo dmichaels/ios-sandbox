@@ -4,12 +4,7 @@ import Utils
 public struct SettingsView: ImageContentView.SettingsViewable {
 
     @ObservedObject var settings: Settings
-    @State private var hideStatusBar: Bool = false
-    @State private var hideToolBar: Bool = false
-    @State private var ignoreSafeArea: Bool = false
     @State private var anotherSettingsView: Bool = false
-    @State private var background: Color = .white
-    @State private var squareColor: Color = .white
 
     public var body: some View {
         Form {
@@ -23,8 +18,12 @@ public struct SettingsView: ImageContentView.SettingsViewable {
                 ColorPicker("", selection: $settings.contentView.background.picker)
             }
             HStack {
-                IconLabel("Square Color", "cOLOR")
+                IconLabel("Outer Square", "COLOR")
                 ColorPicker("", selection: $settings.squareColor.picker)
+            }
+            HStack {
+                IconLabel("Inner Square", "COLOR")
+                ColorPicker("", selection: $settings.innerSquareColor.picker)
             }
             Section {
                 NavigationLink(destination: SettingsAdvancedView(), isActive: $anotherSettingsView) {
@@ -33,13 +32,7 @@ public struct SettingsView: ImageContentView.SettingsViewable {
             }
         }
         .navigationTitle("Settings")
-        .onAppear {
-            self.ignoreSafeArea = settings.contentView.ignoreSafeArea
-            self.hideToolBar = settings.contentView.hideToolBar
-            self.hideStatusBar = settings.contentView.hideStatusBar
-            self.background = settings.contentView.background.color
-            self.squareColor = settings.squareColor.color
-        }
+        .onAppear {}
         .onDisappear {
             if (!self.anotherSettingsView) {
                 settings.contentView.updateSettings()

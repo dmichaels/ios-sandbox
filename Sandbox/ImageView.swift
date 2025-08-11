@@ -5,14 +5,12 @@ public class ImageView: ImageContentView.Viewable
 {
     private var settings: Settings!
     public private(set) var image: CGImage = DummyImage.instance
-    private var backgroundColor: CGColor
     private var viewSize: CGSize = CGSize.zero
     private var imageSizeLarge = false
     private var zoomStart: CGSize? = nil
 
     public init(settings: Settings) {
         self.settings = settings
-        self.backgroundColor = Colour.red.cgcolor
     }
 
     public func update(viewSize: CGSize) {
@@ -26,7 +24,7 @@ public class ImageView: ImageContentView.Viewable
     }
 
     public func onLongTap(_ point: CGPoint) {
-        self.backgroundColor = UIColor.cyan.cgColor
+        self.settings.squareColor = Colour.cyan
         self.image = self.createImage()
         self.settings.contentView.updateImage()
     }
@@ -65,11 +63,11 @@ public class ImageView: ImageContentView.Viewable
             bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         )!
-        context.setFillColor(self.backgroundColor)
+        context.setFillColor(self.settings.squareColor.cgcolor)
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         context.translateBy(x: 0, y: CGFloat(height))
         context.scaleBy(x: 1.0, y: -1.0)
-        context.setFillColor(self.settings.squareColor.cgcolor)
+        context.setFillColor(self.settings.innerSquareColor.cgcolor)
         let innerRectangleWidth: Int = self.settings.large ? 100 : 20
         let innerRectangleHeight: Int = self.settings.large ? 150 : 30
         context.fill(CGRect(x: (width - innerRectangleWidth) / 2, y: (height - innerRectangleHeight) / 2,

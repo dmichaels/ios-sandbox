@@ -29,9 +29,7 @@ public class ImageView: ImageContentView.Viewable
     }
 
     public func onZoom(_ zoomFactor: CGFloat) {
-        if (self.zoomStart == nil) {
-            self.zoomStart = CGSize(width: image.width, height: image.height)
-        }
+        if (self.zoomStart == nil) { self.zoomStart = CGSize(width: image.width, height: image.height) }
         let width: Int = (CGFloat(self.zoomStart!.width) * zoomFactor).clampedInt(1.0...viewSize.width)
         let height: Int = (CGFloat(self.zoomStart!.height) * zoomFactor).clampedInt(1.0...viewSize.height)
         self.image = self.createImage(width: width, height: height)
@@ -58,11 +56,9 @@ public class ImageView: ImageContentView.Viewable
         let width: Int = width ?? self.image.width
         let height: Int = height ?? self.image.height
         guard width > 0, height > 0 else { return DummyImage.instance }
-        let context = CGContext(
-            data: nil, width: width, height: height,
-            bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        )!
+        let context = CGContext(data: nil, width: width, height: height,
+                                bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
+                                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
         context.setFillColor(self.settings.squareColor.cgcolor)
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         context.translateBy(x: 0, y: CGFloat(height))

@@ -15,6 +15,4 @@ public class Settings: ObservableObject
 
     public let cellSizeMax: Int          = 200
     public let cellFitMarginMax: Int     = 120
-
-    // public static let Defaults: Settings = Settings()
 }

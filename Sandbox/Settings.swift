@@ -1,4 +1,5 @@
 import SwiftUI
+import CellGridView
 import Utils
 
 public class Settings: ObservableObject
@@ -7,8 +8,13 @@ public class Settings: ObservableObject
         self.contentView = contentView
     }
 
-    public var contentView: ImageContentView.Config
-    public var squareColor: Colour = Colour.red
-    public var squareSizeSmall: Bool = true
-    public var innerSquareColor: Colour = Colour.magenta
+    @Published public var contentView: ImageContentView.Config
+    @Published public var cellSize: Int             = 42
+    @Published public var cellFit: CellGridView.Fit = CellGridView.Fit.disabled
+    @Published public var cellColor: Colour         = Colour.red
+
+    public let cellSizeMax: Int          = 200
+    public let cellFitMarginMax: Int     = 120
+
+    // public static let Defaults: Settings = Settings()
 }

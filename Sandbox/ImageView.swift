@@ -47,12 +47,18 @@ public class ImageView: ImageContentView.Viewable
     }
 
     public func setupSettings() {
+        //
+        // Called by virtue of calling: self.settings.contentView.showSettingsView()
+        //
         self.settings.cellSize = self.cellSize
         self.settings.cellFit = self.cellFit
         self.settings.cellColor = self.cellColor
     }
 
     public func applySettings() {
+        //
+        // Called by virtue of calling: self.settings.contentView.applySettings()
+        //
         self.cellColor = self.settings.cellColor
         self.cellSize = self.settings.cellSize
         self.update(contentViewUpdate: true)

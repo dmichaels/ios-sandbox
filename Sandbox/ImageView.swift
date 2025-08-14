@@ -58,10 +58,6 @@ public class ImageView: ImageContentView.Viewable
         self.update(contentViewUpdate: true)
     }
 
-    public func onTap(_ point: CGPoint) {
-        print("ImageView.onTap> \(point.x),\(point.y)")
-    }
-
     public func onZoom(_ zoomFactor: CGFloat) {
         if (self.zoomStartCellSize == nil) { self.zoomStartCellSize = self.cellSize }
         self.update(cellSize: Int(CGFloat(self.zoomStartCellSize!) * zoomFactor).clamped(1...self.settings.cellSizeMax))
@@ -87,8 +83,7 @@ public class ImageView: ImageContentView.Viewable
         context.fill(CGRect(x: 0, y: 0, width: imageWidth, height: imageHeight))
         for y in stride(from: 0, to: imageHeight, by: cellSize) {
             for x in stride(from: 0, to: imageWidth, by: cellSize) {
-                let black: Bool = ((x / cellSize) + (y / cellSize)) % 2 == 0
-                context.setFillColor(black ? self.cellColor.cgcolor : Colour.white.cgcolor)
+                context.setFillColor((((x + y) / cellSize) % 2 == 0) ? self.cellColor.cgcolor : Colour.white.cgcolor)
                 context.fill(CGRect(x: x, y: y,
                                     width: min(cellSize, imageHeight - y > 0 ? cellSize : 0 + (imageWidth - x)),
                                     height: min(cellSize, imageHeight - y)))

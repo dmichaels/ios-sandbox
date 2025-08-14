@@ -44,7 +44,7 @@ public struct SettingsView: ImageContentView.SettingsViewable {
         .onAppear {}
         .onDisappear {
             if (!self.anotherSettingsView) {
-                settings.contentView.updateSettings()
+                settings.contentView.applySettings()
             }
         }
     }

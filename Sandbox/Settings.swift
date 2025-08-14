@@ -10,7 +10,7 @@ public class Settings: ObservableObject
 
     @Published public var contentView: ImageContentView.Config
     @Published public var cellSize: Int             = 42
-    @Published public var cellFit: CellGridView.Fit = CellGridView.Fit.disabled
+    @Published public var cellFit: CellGridView.Fit = CellGridView.Fit.fixed
     @Published public var cellColor: Colour         = Colour.red
 
     public let cellSizeMax: Int          = 200

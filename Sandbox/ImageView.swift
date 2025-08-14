@@ -46,16 +46,20 @@ public class ImageView: ImageContentView.Viewable
         if (contentViewUpdate) { self.settings.contentView.updateImage() }
     }
 
-    public func updateSettings() {
+    public func setupSettings() {
+        self.settings.cellSize = self.cellSize
+        self.settings.cellFit = self.cellFit
+        self.settings.cellColor = self.cellColor
+    }
+
+    public func applySettings() {
         self.cellColor = self.settings.cellColor
         self.cellSize = self.settings.cellSize
         self.update(contentViewUpdate: true)
     }
 
-    public func onShowSettingsView() {
-        self.settings.cellSize = self.cellSize
-        self.settings.cellFit = self.cellFit
-        self.settings.cellColor = self.cellColor
+    public func onTap(_ point: CGPoint) {
+        print("ImageView.onTap> \(point.x),\(point.y)")
     }
 
     public func onZoom(_ zoomFactor: CGFloat) {
@@ -64,7 +68,7 @@ public class ImageView: ImageContentView.Viewable
     }
 
     public func onZoomEnd(_ zoomFactor: CGFloat) {
-        self.onZoom(zoomFactor)
+        self.onZoom(zoomFactor) ; self.zoomStartCellSize = nil
     }
 
     public func onSwipeLeft() {

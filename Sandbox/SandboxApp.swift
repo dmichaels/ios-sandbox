@@ -5,7 +5,7 @@ import Utils
 struct SandboxApp: App {
     private let settings: Settings = Settings(
         contentView: ImageContentView.Config(
-            ignoreSafeArea: false,
+            ignoreSafeArea: true,
             background: Colour.gray
         )
     )

@@ -12,7 +12,10 @@ public class Settings: ObservableObject
     @Published public var cellSize: Int             = 42
     @Published public var cellFit: CellGridView.Fit = CellGridView.Fit.fixed
     @Published public var cellColor: Colour         = Colour.red
+    @Published public var scaling: Bool             = true
 
-    public let cellSizeMax: Int          = 200
+    public let cellSizeMax: Int          = 300
     public let cellFitMarginMax: Int     = 120
+
+    public static let Defaults: Settings = Settings(contentView: ImageContentView.Config.Defaults)
 }

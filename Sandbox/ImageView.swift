@@ -1,95 +1,129 @@
 import SwiftUI
 import CellGridView
 import Utils
+import CoreGraphics
+import UIKit   // (or AppKit on macOS)
 
 public class ImageView: ImageContentView.Viewable
 {
-    private var cellGridView: CellGridView = CellGridView()
-    private var settings: Settings // !
-    public private(set) var image: CGImage = DummyImage.instance
-    private var viewWidth: Int = 0
-    private var viewHeight: Int = 0
-    private var zoomStartCellSize: Int? = nil
-    private var cellSize: Int
-    private var cellFit: CellGridView.Fit
-    private var cellColor: Colour
+    private var _settings: Settings // !
+    private var _image: CGImage = DummyImage.instance
+    private var _cellFit: CellGridView.Fit = Settings.Defaults.cellFit
+    private var _cellColor: Colour = Settings.Defaults.cellColor
+    private var _zoomStartCellSize: Int? = nil
+
+    private static let _displayScale: CGFloat = UIScreen.main.scale
+
+    // Internally we store the scaled values with the normal variable names and the unscaled values with variable
+    // names suffixed with "US"; but externally (outward-facing) it's the opposite, with the normal variable names
+    // representing the unscaled values and the scaled values with special variable names suffixed with "Scaled".
+    // And note that when unscaled the scaled and unscaled variable values are the same, i.e. both unscaled.
+
+    private var _scaling:       Bool = Settings.Defaults.scaling
+    private var _viewWidth:     Int  = 0
+    private var _viewWidthUS:   Int  = 0
+    private var _viewHeight:    Int  = 0
+    private var _viewHeightUS:  Int  = 0
+    private var _imageWidth:    Int  = 0
+    private var _imageWidthUS:  Int  = 0
+    private var _imageHeight:   Int  = 0
+    private var _imageHeightUS: Int  = 0
+    private var _cellSize:      Int  = 0
+    private var _cellSizeUS:    Int  = Settings.Defaults.cellSize
+
+    // private var imageWidth:        Int { _imageWidthUS }
+    // private var imageHeight:       Int { _imageHeightUS }
+    // private var cellSize:          Int { _cellSizeUS }
+
+    // private var imageWidthScaled:  Int { _imageWidth }
+    // private var imageHeightScaled: Int { _imageHeight }
+    // private var cellSizeScaled:    Int { _cellSize }
 
     public init(settings: Settings) {
-        self.settings = settings
-        self.cellSize = settings.cellSize
-        self.cellFit = settings.cellFit
-        self.cellColor = settings.cellColor
+        _settings = settings
+        self.setCellSize(_cellSizeUS, scaled: false)
     }
+
+    public var image: CGImage { _image }
+    public var size: CGSize { CGSize(width: _imageWidthUS, height: _imageHeightUS) }
+    public var scale: CGFloat { _scaling ? ImageView._displayScale : 1.0 }
 
     public func update(viewSize: CGSize) {
         guard (viewSize.width > 0) && (viewSize.height > 0) else { return }
-        let viewWidth:  Int = Int(viewSize.width)
-        let viewHeight: Int = Int(viewSize.height)
-        guard (viewWidth != self.viewWidth) || (viewHeight != self.viewHeight) else { return }
-        self.viewWidth  = viewWidth
-        self.viewHeight = viewHeight
-        self.update()
+        self.setViewSize(viewSize, scaled: false) // Assume viewSize (from ContentView) is always unscaled
+        self.update(contentViewUpdate: false)
     }
 
     public func update(cellSize: Int) {
-        guard (cellSize > 0) && (cellSize != self.cellSize) else { return }
-        self.cellSize = cellSize
+        guard cellSize > 0 else { return }
+        self.setCellSize(cellSize, scaled: _scaling)
         self.update(contentViewUpdate: true)
     }
 
-    private func update(contentViewUpdate: Bool = false) {
+    private func update(contentViewUpdate: Bool = true) {
         let preferred: CellGridView.PreferredSize = CellGridView.preferredSize(
-            cellSize: self.cellSize, viewWidth: self.viewWidth, viewHeight: self.viewHeight,
-            fit: self.cellFit, fitMarginMax: self.settings.cellFitMarginMax)
-        self.cellSize = preferred.cellSize
-        self.image = self.createImage(imageWidth: preferred.viewWidth, imageHeight: preferred.viewHeight)
-        if (contentViewUpdate) { self.settings.contentView.updateImage() }
+            cellSize: _cellSize, viewWidth: _viewWidth, viewHeight: _viewHeight,
+            fit: _cellFit, fitMarginMax: _settings.cellFitMarginMax)
+        self.setImageSize(preferred.viewWidth, preferred.viewHeight, scaled: _scaling)
+        self.setCellSize(preferred.cellSize, scaled: _scaling)
+        self.updateImage(contentViewUpdate: contentViewUpdate)
+    }
+
+    private func updateImage(contentViewUpdate: Bool = true) {
+        _image = self.createImage(imageWidth: _imageWidth, imageHeight: _imageHeight)
+        if (contentViewUpdate) { _settings.contentView.updateImage() }
     }
 
     public func setupSettings() {
         //
-        // Called by virtue of calling: self.settings.contentView.showSettingsView()
+        // Called by virtue of calling: _settings.contentView.showSettingsView()
         //
-        self.settings.cellSize = self.cellSize
-        self.settings.cellFit = self.cellFit
-        self.settings.cellColor = self.cellColor
+        _settings.cellSize = _cellSizeUS // Use unscaled in SettingsView
+        _settings.cellFit = _cellFit
+        _settings.cellColor = _cellColor
+        _settings.scaling = _scaling
     }
 
     public func applySettings() {
         //
-        // Called by virtue of calling: self.settings.contentView.applySettings()
+        // Called by virtue of calling: _settings.contentView.applySettings()
         //
-        self.cellColor = self.settings.cellColor
-        self.cellSize = self.settings.cellSize
+        _scaling = _settings.scaling
+        _cellFit = _settings.cellFit
+        _cellColor = _settings.cellColor
+        self.setCellSize(_settings.cellSize, scaled: false) // Use unscaled in SettingsView
         self.update(contentViewUpdate: true)
     }
 
     public func onZoom(_ zoomFactor: CGFloat) {
-        if (self.zoomStartCellSize == nil) { self.zoomStartCellSize = self.cellSize }
-        self.update(cellSize: Int(CGFloat(self.zoomStartCellSize!) * zoomFactor).clamped(1...self.settings.cellSizeMax))
+        if (_zoomStartCellSize == nil) { _zoomStartCellSize = _cellSize }
+        let cellSize: Int = Int(CGFloat(_zoomStartCellSize!) * zoomFactor).clamped(1..._settings.cellSizeMax)
+        self.update(cellSize: cellSize)
     }
 
     public func onZoomEnd(_ zoomFactor: CGFloat) {
-        self.onZoom(zoomFactor) ; self.zoomStartCellSize = nil
+        self.onZoom(zoomFactor) ; _zoomStartCellSize = nil
     }
 
     public func onSwipeLeft() {
-        self.settings.contentView.showSettingsView()
+        _settings.contentView.showSettingsView()
     }
 
     private func createImage(imageWidth: Int? = nil, imageHeight: Int? = nil, cellSize: Int? = nil) -> CGImage {
-        let imageWidth:  Int = imageWidth  ?? self.image.width
-        let imageHeight: Int = imageHeight ?? self.image.height
-        let cellSize:    Int = cellSize    ?? self.cellSize
+
+        let imageWidth:  Int = (imageWidth  ?? _imageWidth)
+        let imageHeight: Int = (imageHeight ?? _imageHeight)
+        let cellSize:    Int = (cellSize    ?? _cellSize)
+
         guard imageWidth > 0, imageHeight > 0 else { return DummyImage.instance }
         let context = CGContext(data: nil, width: imageWidth, height: imageHeight,
-                                bitsPerComponent: 8, bytesPerRow: imageWidth * 4, space: CGColorSpaceCreateDeviceRGB(),
+                                bitsPerComponent: 8, bytesPerRow: imageWidth * Screen.channels, space: CGColorSpaceCreateDeviceRGB(),
                                 bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
         context.setFillColor(Colour.white.cgcolor)
         context.fill(CGRect(x: 0, y: 0, width: imageWidth, height: imageHeight))
         for y in stride(from: 0, to: imageHeight, by: cellSize) {
             for x in stride(from: 0, to: imageWidth, by: cellSize) {
-                context.setFillColor((((x + y) / cellSize) % 2 == 0) ? self.cellColor.cgcolor : Colour.white.cgcolor)
+                context.setFillColor((((x + y) / cellSize) % 2 == 0) ? _cellColor.cgcolor : Colour.white.cgcolor)
                 context.fill(CGRect(x: x, y: y,
                                     width: min(cellSize, imageHeight - y > 0 ? cellSize : 0 + (imageWidth - x)),
                                     height: min(cellSize, imageHeight - y)))
@@ -97,4 +131,51 @@ public class ImageView: ImageContentView.Viewable
         }
         return context.makeImage()!
     }
+
+    private func setViewSize(_ viewSize: CGSize, scaled: Bool = false) {
+        guard (viewSize.width > 0) && (viewSize.height > 0) else { return }
+        ImageView.setDimension(Int(floor(viewSize.width)), &_viewWidth, &_viewWidthUS, scaled: scaled, scaling: _scaling)
+        ImageView.setDimension(Int(floor(viewSize.height)), &_viewHeight, &_viewHeightUS, scaled: scaled, scaling: _scaling)
+    }
+
+    private func setImageSize(_ imageWidth: Int, _ imageHeight: Int, scaled: Bool = false) {
+        guard (imageWidth > 0) && (imageHeight > 0) else { return }
+        ImageView.setDimension(imageWidth, &_imageWidth, &_imageWidthUS, scaled: scaled, scaling: _scaling)
+        ImageView.setDimension(imageHeight, &_imageHeight, &_imageHeightUS, scaled: scaled, scaling: _scaling)
+    }
+
+    private func setCellSize(_ cellSize: Int, scaled: Bool = false) {
+        ImageView.setDimension(cellSize, &_cellSize, &_cellSizeUS, scaled: scaled, scaling: _scaling)
+    }
+
+    private static func setDimension(_ value: Int, _ scaledValue: inout Int,
+                                                   _ unscaledValue: inout Int, scaled: Bool, scaling: Bool) {
+        (scaledValue, unscaledValue) = ImageView.scaling(value, scaled: scaled, scaling: scaling)
+    }
+
+    // Returns the scaled and unscaled values for the given value as a tuple (in that order), based
+    // on whether or not the given value is scaled, and whether or not we are currently in scaling mode.
+    //
+    private static func scaling(_ value: Int, scaled: Bool, scaling: Bool) -> (Int, Int) {
+        if (scaled) {
+            if (scaling) {
+                return (value, ImageView.unscaled(value))
+            }
+            else {
+                let unscaledValue: Int = ImageView.unscaled(value)
+                return (unscaledValue, unscaledValue)
+            }
+        }
+        else if (scaling) {
+            return (ImageView.scaled(value), value)
+        }
+        else {
+            return (value, value)
+        }
+    }
+
+    private static func scaled(_ value: CGFloat) -> Int { Int(round(value * ImageView._displayScale)) }
+    private static func scaled(_ value: Int) -> Int { Int(round(CGFloat(value) * ImageView._displayScale)) }
+    private static func unscaled(_ value: CGFloat) -> Int { Int(round(value / ImageView._displayScale)) }
+    private static func unscaled(_ value: Int) -> Int { Int(round(CGFloat(value) / ImageView._displayScale)) }
 }

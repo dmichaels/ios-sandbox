@@ -34,6 +34,7 @@ public struct SettingsView: ImageContentView.SettingsViewable {
                         cellSizeDisplay = settings.cellSize
                     }
             }
+            Toggle("Pixel Scaling", isOn: $settings.scaling)
             Section {
                 NavigationLink(destination: SettingsAdvancedView(), isActive: $anotherSettingsView) {
                     Label("Advanced Settings", systemImage: "gearshape.2")

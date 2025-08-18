@@ -9,9 +9,9 @@ public class Settings: ObservableObject
     }
 
     @Published public var contentView: ImageContentView.Config
-    @Published public var cellSize: Int             = 42
     @Published public var cellFit: CellGridView.Fit = CellGridView.Fit.fixed
     @Published public var cellColor: Colour         = Colour.red
+    @Published public var cellSize: Int             = 43
     @Published public var scaling: Bool             = true
 
     public let cellSizeMax: Int      = 300

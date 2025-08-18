@@ -73,18 +73,18 @@ public class ImageView: ImageContentView.Viewable
         //
         // Called by virtue of calling: _settings.contentView.showSettingsView()
         //
-        _settings.cellSize = _cellSizeUS // Use unscaled in SettingsView
-        _settings.cellFit = _cellFit
+        _settings.scaling   = _scaling
+        _settings.cellFit   = _cellFit
         _settings.cellColor = _cellColor
-        _settings.scaling = _scaling
+        _settings.cellSize  = _cellSizeUS // Use unscaled in SettingsView
     }
 
     public func applySettings() {
         //
         // Called by virtue of calling: _settings.contentView.applySettings()
         //
-        _scaling = _settings.scaling
-        _cellFit = _settings.cellFit
+        _scaling   = _settings.scaling
+        _cellFit   = _settings.cellFit
         _cellColor = _settings.cellColor
         self.setCellSize(_settings.cellSize, scaled: false) // Use unscaled in SettingsView
         self.update(contentViewUpdate: true)

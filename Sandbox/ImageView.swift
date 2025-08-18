@@ -7,18 +7,15 @@ import UIKit   // (or AppKit on macOS)
 public class ImageView: ImageContentView.Viewable
 {
     private var _settings: Settings // !
-    private var _image: CGImage = DummyImage.instance
+    private var _image: CGImage = DefaultImage.instance
     private var _cellFit: CellGridView.Fit = Settings.Defaults.cellFit
     private var _cellColor: Colour = Settings.Defaults.cellColor
     private var _zoomStartCellSize: Int? = nil
 
-@Environment(\.displayScale) private var xdisplayScale // hmm idea from gpt-5
-    private static let _displayScale: CGFloat = UIScreen.main.scale
-
-    // Internally we store the scaled values with the normal variable names and the unscaled values with variable
-    // names suffixed with "US"; but externally (outward-facing) it's the opposite, with the normal variable names
-    // representing the unscaled values and the scaled values with special variable names suffixed with "Scaled".
-    // And note that when unscaled the scaled and unscaled variable values are the same, i.e. both unscaled.
+    // We store the SCALED values INTERNALLY with the normal variable names and the UNSCALED values with variable
+    // names suffixed with "US"; but EXTERNALLY (outward-facing) it's the OPPOSITE, with the normal variable names
+    // representing the UNSCALED values and the SCALED values with special variable names suffixed with "Scaled".
+    // And note that when UNSCALED the scaled and unscaled variable values are the SAME, i.e. BOTH UNSCALED.
 
     private var _scaling:       Bool = Settings.Defaults.scaling
     private var _viewWidth:     Int  = 0
@@ -29,7 +26,7 @@ public class ImageView: ImageContentView.Viewable
     private var _imageWidthUS:  Int  = 0
     private var _imageHeight:   Int  = 0
     private var _imageHeightUS: Int  = 0
-    private var _cellSize:      Int  = 0
+    private var _cellSize:      Int  = ImageView.scaled(Settings.Defaults.cellSize, scaling: Settings.Defaults.scaling)
     private var _cellSizeUS:    Int  = Settings.Defaults.cellSize
 
     // private var imageWidth:        Int { _imageWidthUS }
@@ -42,12 +39,11 @@ public class ImageView: ImageContentView.Viewable
 
     public init(settings: Settings) {
         _settings = settings
-        self.setCellSize(_cellSizeUS, scaled: false)
     }
 
     public var image: CGImage { _image }
     public var size: CGSize { CGSize(width: _imageWidthUS, height: _imageHeightUS) }
-    public var scale: CGFloat { _scaling ? ImageView._displayScale : 1.0 }
+    public var scale: CGFloat { _scaling ? Settings.Defaults.displayScale : 1.0 }
 
     public func update(viewSize: CGSize) {
         guard (viewSize.width > 0) && (viewSize.height > 0) else { return }
@@ -116,10 +112,10 @@ public class ImageView: ImageContentView.Viewable
         let imageHeight: Int = (imageHeight ?? _imageHeight)
         let cellSize:    Int = (cellSize    ?? _cellSize)
 
-        guard imageWidth > 0, imageHeight > 0 else { return DummyImage.instance }
+        guard imageWidth > 0, imageHeight > 0 else { return DefaultImage.instance }
         let context = CGContext(data: nil, width: imageWidth, height: imageHeight,
-                                bitsPerComponent: 8, bytesPerRow: imageWidth * Screen.channels, space: CGColorSpaceCreateDeviceRGB(),
-                                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+                                bitsPerComponent: 8, bytesPerRow: imageWidth * Screen.channels,
+                                space: DefaultImage.space, bitmapInfo: DefaultImage.bitmapInfo)!
         context.setFillColor(Colour.white.cgcolor)
         context.fill(CGRect(x: 0, y: 0, width: imageWidth, height: imageHeight))
         for y in stride(from: 0, to: imageHeight, by: cellSize) {
@@ -151,13 +147,14 @@ public class ImageView: ImageContentView.Viewable
 
     private static func setDimension(_ value: Int, _ scaledValue: inout Int,
                                                    _ unscaledValue: inout Int, scaled: Bool, scaling: Bool) {
-        (scaledValue, unscaledValue) = ImageView.scaling(value, scaled: scaled, scaling: scaling)
+        (scaledValue, unscaledValue) = ImageView.scaler(value, scaled: scaled, scaling: scaling)
     }
 
-    // Returns the scaled and unscaled values for the given value as a tuple (in that order), based
-    // on whether or not the given value is scaled, and whether or not we are currently in scaling mode.
+    // Returns the scaled and unscaled values for the given value as a tuple (in that order),
+    // based on whether or not the given value is scaled, and whether or not we are currently
+    // in scaling mode (i.e. whether or not we want a scaled value as the scaled result).
     //
-    private static func scaling(_ value: Int, scaled: Bool, scaling: Bool) -> (Int, Int) {
+    private static func scaler(_ value: Int, scaled: Bool, scaling: Bool) -> (Int, Int) {
         if (scaled) {
             if (scaling) {
                 return (value, ImageView.unscaled(value))
@@ -175,8 +172,8 @@ public class ImageView: ImageContentView.Viewable
         }
     }
 
-    private static func scaled(_ value: CGFloat) -> Int { Int(round(value * ImageView._displayScale)) }
-    private static func scaled(_ value: Int) -> Int { Int(round(CGFloat(value) * ImageView._displayScale)) }
-    private static func unscaled(_ value: CGFloat) -> Int { Int(round(value / ImageView._displayScale)) }
-    private static func unscaled(_ value: Int) -> Int { Int(round(CGFloat(value) / ImageView._displayScale)) }
+    private static func scaled(_ value: Int) -> Int { Int(round(CGFloat(value) * Settings.Defaults.displayScale)) }
+    private static func scaled(_ value: Int, scaling: Bool) -> Int { scaling ? ImageView.scaled(value) : value }
+    private static func unscaled(_ value: Int) -> Int { Int(round(CGFloat(value) / Settings.Defaults.displayScale)) }
+    private static func unscaled(_ value: Int, scaling: Bool) -> Int { scaling ? ImageView.unscaled(value) : value }
 }

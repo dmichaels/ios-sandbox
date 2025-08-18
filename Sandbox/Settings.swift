@@ -14,8 +14,9 @@ public class Settings: ObservableObject
     @Published public var cellColor: Colour         = Colour.red
     @Published public var scaling: Bool             = true
 
-    public let cellSizeMax: Int          = 300
-    public let cellFitMarginMax: Int     = 120
+    public let cellSizeMax: Int      = 300
+    public let cellFitMarginMax: Int = 120
+    public let displayScale: CGFloat = UIScreen.main.scale
 
     public static let Defaults: Settings = Settings(contentView: ImageContentView.Config.Defaults)
 }

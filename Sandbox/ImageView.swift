@@ -40,7 +40,7 @@ public class ImageView: ImageContentView.Viewable
     }
 
     public var image: CGImage { _image }
-    public var size: CGSize { CGSize(width: _imageWidthUS, height: _imageHeightUS) }
+    public var size:  CGSize  { CGSize(width: _imageWidthUS, height: _imageHeightUS) }
     public var scale: CGFloat { _scaling ? Settings.Defaults.displayScale : 1.0 }
 
     public func update(viewSize: CGSize) {
@@ -49,7 +49,7 @@ public class ImageView: ImageContentView.Viewable
         self.update(contentViewUpdate: false)
     }
 
-    public func update(cellSize: Int) {
+    private func update(cellSize: Int) {
         guard cellSize > 0 else { return }
         self.setCellSize(cellSize, scaled: _scaling)
         self.update(contentViewUpdate: true)
@@ -105,11 +105,9 @@ public class ImageView: ImageContentView.Viewable
     }
 
     private func createImage(imageWidth: Int? = nil, imageHeight: Int? = nil, cellSize: Int? = nil) -> CGImage {
-
         let imageWidth:  Int = (imageWidth  ?? _imageWidth)
         let imageHeight: Int = (imageHeight ?? _imageHeight)
         let cellSize:    Int = (cellSize    ?? _cellSize)
-
         guard imageWidth > 0, imageHeight > 0 else { return DefaultImage.instance }
         let context = CGContext(data: nil, width: imageWidth, height: imageHeight,
                                 bitsPerComponent: 8, bytesPerRow: imageWidth * Screen.channels,

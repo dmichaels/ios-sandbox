@@ -1,16 +1,14 @@
 import SwiftUI
 import CellGridView
 import Utils
-import CoreGraphics
-import UIKit   // (or AppKit on macOS)
 
 public class ImageView: ImageContentView.Viewable
 {
-    private var _settings: Settings // !
-    private var _image: CGImage = DefaultImage.instance
+    private var _settings: Settings
+    private var _image: CGImage            = DefaultImage.instance
     private var _cellFit: CellGridView.Fit = Settings.Defaults.cellFit
-    private var _cellColor: Colour = Settings.Defaults.cellColor
-    private var _zoomStartCellSize: Int? = nil
+    private var _cellColor: Colour         = Settings.Defaults.cellColor
+    private var _zoomStartCellSize: Int?   = nil
 
     // We store the SCALED values INTERNALLY with the normal variable names and the UNSCALED values with variable
     // names suffixed with "US"; but EXTERNALLY (outward-facing) it's the OPPOSITE, with the normal variable names

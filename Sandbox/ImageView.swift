@@ -12,6 +12,7 @@ public class ImageView: ImageContentView.Viewable
     private var _cellColor: Colour = Settings.Defaults.cellColor
     private var _zoomStartCellSize: Int? = nil
 
+@Environment(\.displayScale) private var xdisplayScale // hmm idea from gpt-5
     private static let _displayScale: CGFloat = UIScreen.main.scale
 
     // Internally we store the scaled values with the normal variable names and the unscaled values with variable

@@ -3,12 +3,7 @@ import Utils
 
 @main
 struct SandboxApp: App {
-    private let settings: Settings = Settings(
-        contentView: ImageContentView.Config(
-            ignoreSafeArea: true,
-            background: Colour.gray
-        )
-    )
+    private let settings: Settings = Settings()
     var body: some Scene {
         WindowGroup {
             ImageContentView(config: self.settings.contentView,

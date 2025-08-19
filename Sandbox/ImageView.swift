@@ -15,6 +15,7 @@ public class ImageView: ImageContentView.Viewable
     // And note that when UNSCALED the scaled and unscaled variable values are the SAME, i.e. BOTH UNSCALED.
     //
     private var _scaling:       Bool = Settings.Defaults.scaling
+    private var _viewSize:      CGSize = CGSize.zero // Temporary
     private var _viewWidth:     Int  = 0
     private var _viewWidthUS:   Int  = 0
     private var _viewHeight:    Int  = 0
@@ -45,6 +46,7 @@ public class ImageView: ImageContentView.Viewable
 
     public func update(viewSize: CGSize) {
         guard (viewSize.width > 0) && (viewSize.height > 0) else { return }
+        _viewSize = viewSize
         _setViewSize(viewSize, scaled: false) // Assume viewSize (from ContentView) is always unscaled
         _update(notify: false)
     }
@@ -93,8 +95,7 @@ public class ImageView: ImageContentView.Viewable
 
     public func onZoom(_ zoomFactor: CGFloat) {
         if (_zoomCellSize == nil) { _zoomCellSize = _cellSize }
-        let cellSize: Int = Int(CGFloat(_zoomCellSize!) * zoomFactor).clamped(1..._settings.cellSizeMax)
-        _update(cellSize: cellSize)
+        _update(cellSize: Int(CGFloat(_zoomCellSize!) * zoomFactor).clamped(1..._settings.cellSizeMax))
     }
 
     public func onZoomEnd(_ zoomFactor: CGFloat) {
@@ -110,9 +111,7 @@ public class ImageView: ImageContentView.Viewable
         let imageHeight: Int = (imageHeight ?? _imageHeight)
         let cellSize:    Int = (cellSize    ?? _cellSize)
         guard imageWidth > 0, imageHeight > 0 else { return DefaultImage.instance }
-        let context = CGContext(data: nil, width: imageWidth, height: imageHeight,
-                                bitsPerComponent: 8, bytesPerRow: imageWidth * Screen.channels,
-                                space: DefaultImage.space, bitmapInfo: DefaultImage.bitmapInfo)!
+        let context: CGContext = DefaultImage.context(width: imageWidth, height: imageHeight)
         context.setFillColor(Colour.white.cgcolor)
         context.fill(CGRect(x: 0, y: 0, width: imageWidth, height: imageHeight))
         for y in stride(from: 0, to: imageHeight, by: cellSize) {
@@ -123,7 +122,6 @@ public class ImageView: ImageContentView.Viewable
                 context.fill(CGRect(x: x, y: y, width: cw, height: ch))
             }
         }
-        print("CI> \(imageWidth)x\(imageHeight) vw: \(_viewWidth)x\(_viewHeight) vwu: \(_viewWidthUS)x\(_viewHeightUS) cs: \(_cellSize) csu: \(_cellSizeUS) sc: \(_scaling)")
         return context.makeImage()!
     }
 
@@ -136,9 +134,7 @@ public class ImageView: ImageContentView.Viewable
         let imageHeight: Int = imageHeight ?? _imageHeight
         let cellSize:    Int = cellSize    ?? _cellSize
         guard imageWidth > 0, imageHeight > 0, cellSize > 0 else { return DefaultImage.instance }
-        let context = CGContext(data: nil, width: imageWidth, height: imageHeight,
-                                bitsPerComponent: 8, bytesPerRow: imageWidth * Screen.channels,
-                                space: DefaultImage.space, bitmapInfo: DefaultImage.bitmapInfo)!
+        let context: CGContext = DefaultImage.context(width: imageWidth, height: imageHeight)
         context.setFillColor(Colour.white.cgcolor)
         context.fill(CGRect(x: 0, y: 0, width: imageWidth, height: imageHeight))
         context.setAllowsAntialiasing(true)
@@ -159,29 +155,31 @@ public class ImageView: ImageContentView.Viewable
                 context.fillPath()
             }
         }
-        print("CI> \(imageWidth)x\(imageHeight) vw: \(_viewWidth)x\(_viewHeight) vwu: \(_viewWidthUS)x\(_viewHeightUS) cs: \(_cellSize) csu: \(_cellSizeUS) sc: \(_scaling)")
+        print("IM> i: \(imageWidth)x\(imageHeight) iu: \(_imageWidthUS)x\(_imageHeightUS)" +
+              " vs: \(_viewSize.width)x\(_viewSize.height) v: \(_viewWidth)x\(_viewHeight)" +
+              " vu: \(_viewWidthUS)x\(_viewHeightUS) c: \(_cellSize) cu: \(_cellSizeUS) s: \(_scaling)")
         return context.makeImage()!
     }
 
     private func _setViewSize(_ viewSize: CGSize, scaled: Bool = false, scaling: Bool? = nil) {
         guard (viewSize.width > 0) && (viewSize.height > 0) else { return }
         let scaling: Bool = scaling ?? _scaling
-        ImageView.setDimension(Int(floor(viewSize.width)), &_viewWidth, &_viewWidthUS, scaled: scaled, scaling: scaling)
-        ImageView.setDimension(Int(floor(viewSize.height)), &_viewHeight, &_viewHeightUS, scaled: scaled, scaling: scaling)
+        ImageView._setDimension(Int(floor(viewSize.width)), &_viewWidth, &_viewWidthUS, scaled: scaled, scaling: scaling)
+        ImageView._setDimension(Int(floor(viewSize.height)), &_viewHeight, &_viewHeightUS, scaled: scaled, scaling: scaling)
     }
 
     private func _setImageSize(_ imageWidth: Int, _ imageHeight: Int, scaled: Bool = false) {
         guard (imageWidth > 0) && (imageHeight > 0) else { return }
-        ImageView.setDimension(imageWidth, &_imageWidth, &_imageWidthUS, scaled: scaled, scaling: _scaling)
-        ImageView.setDimension(imageHeight, &_imageHeight, &_imageHeightUS, scaled: scaled, scaling: _scaling)
+        ImageView._setDimension(imageWidth, &_imageWidth, &_imageWidthUS, scaled: scaled, scaling: _scaling)
+        ImageView._setDimension(imageHeight, &_imageHeight, &_imageHeightUS, scaled: scaled, scaling: _scaling)
     }
 
     private func _setCellSize(_ cellSize: Int, scaled: Bool = false) {
-        ImageView.setDimension(cellSize, &_cellSize, &_cellSizeUS, scaled: scaled, scaling: _scaling)
+        ImageView._setDimension(cellSize, &_cellSize, &_cellSizeUS, scaled: scaled, scaling: _scaling)
     }
 
-    private static func setDimension(_ value: Int, _ scaledValue: inout Int,
-                                                   _ unscaledValue: inout Int, scaled: Bool, scaling: Bool) {
+    private static func _setDimension(_ value: Int, _ scaledValue: inout Int,
+                                                    _ unscaledValue: inout Int, scaled: Bool, scaling: Bool) {
         (scaledValue, unscaledValue) = ImageView._scaler(value, scaled: scaled, scaling: scaling)
     }
 

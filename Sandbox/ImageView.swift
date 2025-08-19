@@ -15,33 +15,51 @@ public class ImageView: ImageContentView.Viewable
     // And note that when UNSCALED the scaled and unscaled variable values are the SAME, i.e. BOTH UNSCALED.
     //
     private var _scaling:       Bool = Settings.Defaults.scaling
+
     private var _viewSize:      CGSize = CGSize.zero // Temporary
     private var _viewWidth:     Int  = 0
     private var _viewWidthUS:   Int  = 0
     private var _viewHeight:    Int  = 0
     private var _viewHeightUS:  Int  = 0
+
     private var _imageWidth:    Int  = 0
     private var _imageWidthUS:  Int  = 0
     private var _imageHeight:   Int  = 0
     private var _imageHeightUS: Int  = 0
-    private var _cellSize:      Int  = ImageView._scaled(Settings.Defaults.cellSize, scaling: Settings.Defaults.scaling)
-    private var _cellSizeUS:    Int  = Settings.Defaults.cellSize
-    private var _cellSizeMax:   Int  = 0
-    private var _cellSizeMaxUS: Int  = 0
+
+    private var _cellSize: Int        = ImageView._scaled(Settings.Defaults.cellSize, scaling: Settings.Defaults.scaling)
+    private var _cellSizeUS: Int      = Settings.Defaults.cellSize
+    private var _cellPadding: Int     = ImageView._scaled(Settings.Defaults.cellPadding, scaling: Settings.Defaults.scaling)
+    private var _cellPaddingUS: Int   = Settings.Defaults.cellPadding
+    private var _cellShape: CellShape = CellShape.rounded
+    private var _cellShading: Bool    = Settings.Defaults.cellShading
+
+    private var _cellSizeMax: Int = 0
+    private var _cellSizeMaxUS: Int = 0
+    private var _cellPaddingMax: Int = 0
+    private var _cellPaddingMaxUS: Int = 0
+    private var _cellSizeInnerMin:  Int = 0
+    private var _cellSizeInnerMinUS: Int = 0
+
     private var _zoomCellSize:  Int? = nil
 
-    public var imageWidth:        Int { _imageWidthUS }
-    public var imageWidthScaled:  Int { _imageWidth }
-    public var imageHeight:       Int { _imageHeightUS }
-    public var imageHeightScaled: Int { _imageHeight }
-    public var cellSize:          Int { _cellSizeUS }
-    public var cellSizeScaled:    Int { _cellSize }
-    public var cellSizeMax:       Int { _cellSizeMaxUS }
-    public var cellSizeMaxScaled: Int { _cellSizeMax }
+    public var imageWidth: Int             { _imageWidthUS }
+    public var imageWidthScaled: Int       { _imageWidth }
+    public var imageHeight: Int            { _imageHeightUS }
+    public var imageHeightScaled: Int      { _imageHeight }
+    public var cellSize: Int               { _cellSizeUS }
+    public var cellSizeScaled: Int         { _cellSize }
+    public var cellSizeMax: Int            { _cellSizeMaxUS }
+    public var cellSizeMaxScaled: Int      { _cellSizeMax }
+    public var cellSizeInnerMin: Int       { _cellSizeInnerMinUS }
+    public var cellSizeInnerMinScaled: Int { _cellSizeInnerMin }
+    public var cellPaddingMax: Int         { _cellPaddingMaxUS }
+    public var cellPaddingMaxScaled: Int   { _cellPaddingMax }
 
     public init(settings: Settings) {
         _settings = settings
         ImageView._setDimension(Settings.Defaults.cellSizeMax, &_cellSizeMax, &_cellSizeMaxUS, scaled: false, scaling: true)
+        ImageView._setDimension(Settings.Defaults.cellSizeInnerMin, &_cellSizeInnerMin, &_cellSizeInnerMinUS, scaled: false, scaling: true)
     }
 
     public var image: CGImage { _image }

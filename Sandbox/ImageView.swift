@@ -26,6 +26,8 @@ public class ImageView: ImageContentView.Viewable
     private var _imageHeightUS: Int  = 0
     private var _cellSize:      Int  = ImageView._scaled(Settings.Defaults.cellSize, scaling: Settings.Defaults.scaling)
     private var _cellSizeUS:    Int  = Settings.Defaults.cellSize
+    private var _cellSizeMax:   Int  = 0
+    private var _cellSizeMaxUS: Int  = 0
     private var _zoomCellSize:  Int? = nil
 
     // private var imageWidth:        Int { _imageWidthUS }
@@ -38,14 +40,15 @@ public class ImageView: ImageContentView.Viewable
 
     public init(settings: Settings) {
         _settings = settings
+        ImageView._setDimension(Settings.Defaults.cellSizeMax, &_cellSizeMax, &_cellSizeMaxUS, scaled: false, scaling: true)
     }
 
     public var image: CGImage { _image }
     public var size:  CGSize  { CGSize(width: _imageWidthUS, height: _imageHeightUS) }
-    public var scale: CGFloat { _scaling ? Settings.Defaults.displayScale : 1.0 }
+    public var scale: CGFloat { _scaling ? Settings.Defaults.screenScale : 1.0 }
 
     public func update(viewSize: CGSize) {
-        guard (viewSize.width > 0) && (viewSize.height > 0) else { return }
+        guard viewSize.width > 0, viewSize.height > 0 else { return }
         _viewSize = viewSize
         _setViewSize(viewSize, scaled: false) // Assume viewSize (from ContentView) is always unscaled
         _update(notify: false)
@@ -95,7 +98,7 @@ public class ImageView: ImageContentView.Viewable
 
     public func onZoom(_ zoomFactor: CGFloat) {
         if (_zoomCellSize == nil) { _zoomCellSize = _cellSize }
-        _update(cellSize: Int(CGFloat(_zoomCellSize!) * zoomFactor).clamped(1..._settings.cellSizeMax))
+        _update(cellSize: Int(CGFloat(_zoomCellSize!) * zoomFactor).clamped(1..._cellSizeMax))
     }
 
     public func onZoomEnd(_ zoomFactor: CGFloat) {
@@ -155,21 +158,18 @@ public class ImageView: ImageContentView.Viewable
                 context.fillPath()
             }
         }
-        print("IM> i: \(imageWidth)x\(imageHeight) iu: \(_imageWidthUS)x\(_imageHeightUS)" +
-              " vs: \(_viewSize.width)x\(_viewSize.height) v: \(_viewWidth)x\(_viewHeight)" +
-              " vu: \(_viewWidthUS)x\(_viewHeightUS) c: \(_cellSize) cu: \(_cellSizeUS) s: \(_scaling)")
         return context.makeImage()!
     }
 
     private func _setViewSize(_ viewSize: CGSize, scaled: Bool = false, scaling: Bool? = nil) {
-        guard (viewSize.width > 0) && (viewSize.height > 0) else { return }
+        guard viewSize.width > 0, viewSize.height > 0 else { return }
         let scaling: Bool = scaling ?? _scaling
         ImageView._setDimension(Int(floor(viewSize.width)), &_viewWidth, &_viewWidthUS, scaled: scaled, scaling: scaling)
         ImageView._setDimension(Int(floor(viewSize.height)), &_viewHeight, &_viewHeightUS, scaled: scaled, scaling: scaling)
     }
 
     private func _setImageSize(_ imageWidth: Int, _ imageHeight: Int, scaled: Bool = false) {
-        guard (imageWidth > 0) && (imageHeight > 0) else { return }
+        guard imageWidth > 0, imageHeight > 0 else { return }
         ImageView._setDimension(imageWidth, &_imageWidth, &_imageWidthUS, scaled: scaled, scaling: _scaling)
         ImageView._setDimension(imageHeight, &_imageHeight, &_imageHeightUS, scaled: scaled, scaling: _scaling)
     }
@@ -205,8 +205,8 @@ public class ImageView: ImageContentView.Viewable
         }
     }
 
-    private static func _scaled(_ value: Int) -> Int { Int(round(CGFloat(value) * Settings.Defaults.displayScale)) }
+    private static func _scaled(_ value: Int) -> Int { Int(round(CGFloat(value) * Settings.Defaults.screenScale)) }
     private static func _scaled(_ value: Int, scaling: Bool) -> Int { scaling ? ImageView._scaled(value) : value }
-    private static func _unscaled(_ value: Int) -> Int { Int(round(CGFloat(value) / Settings.Defaults.displayScale)) }
+    private static func _unscaled(_ value: Int) -> Int { Int(round(CGFloat(value) / Settings.Defaults.screenScale)) }
     private static func _unscaled(_ value: Int, scaling: Bool) -> Int { scaling ? ImageView._unscaled(value) : value }
 }

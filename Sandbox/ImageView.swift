@@ -39,10 +39,6 @@ public class ImageView: ImageContentView.Viewable
     public var cellSizeMax:       Int { _cellSizeMaxUS }
     public var cellSizeMaxScaled: Int { _cellSizeMax }
 
-    public func onTap(_ point: CGPoint) {
-        print("ImageView.onTap: \(point)")
-    }
-
     public init(settings: Settings) {
         _settings = settings
         ImageView._setDimension(Settings.Defaults.cellSizeMax, &_cellSizeMax, &_cellSizeMaxUS, scaled: false, scaling: true)

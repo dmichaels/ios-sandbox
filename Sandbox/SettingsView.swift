@@ -4,8 +4,8 @@ import Utils
 public struct SettingsView: ImageContentView.SettingsViewable {
 
     @ObservedObject internal var settings: Settings
-    @State          private var cellSizeDisplay: Int? = nil
-    @State          private var anotherSettingsView: Bool = false
+    @State          private  var cellSizeDisplay: Int? = nil
+    @State          private  var anotherSettingsView: Bool = false
 
     public var body: some View {
         Form {
@@ -28,7 +28,7 @@ public struct SettingsView: ImageContentView.SettingsViewable {
                 }.padding(.bottom, 4)
                 Slider(
                     value: Binding(get: { Double(settings.cellSize) }, set: { settings.cellSize = Int($0.rounded()) }),
-                                   in: 1...100, step: 1)
+                                   in: 1...Double(settings.imageView.cellSizeMax), step: 1)
                     .padding(.top, -8).padding(.bottom, -2)
                     .onChange(of: settings.cellSize) { value in
                         cellSizeDisplay = settings.cellSize

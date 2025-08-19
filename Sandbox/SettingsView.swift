@@ -3,9 +3,9 @@ import Utils
 
 public struct SettingsView: ImageContentView.SettingsViewable {
 
-    @ObservedObject var settings: Settings
-    @State private var cellSizeDisplay: Int? = nil
-    @State private var anotherSettingsView: Bool = false
+    @ObservedObject internal var settings: Settings
+    @State          private var cellSizeDisplay: Int? = nil
+    @State          private var anotherSettingsView: Bool = false
 
     public var body: some View {
         Form {

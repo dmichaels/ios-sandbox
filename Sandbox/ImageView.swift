@@ -30,13 +30,19 @@ public class ImageView: ImageContentView.Viewable
     private var _cellSizeMaxUS: Int  = 0
     private var _zoomCellSize:  Int? = nil
 
-    // private var imageWidth:        Int { _imageWidthUS }
-    // private var imageHeight:       Int { _imageHeightUS }
-    // private var cellSize:          Int { _cellSizeUS }
+    public var imageWidth:        Int { _imageWidthUS }
+    public var imageHeight:       Int { _imageHeightUS }
+    public var cellSize:          Int { _cellSizeUS }
+    public var cellSizeMax:       Int { _cellSizeMaxUS }
 
-    // private var imageWidthScaled:  Int { _imageWidth }
-    // private var imageHeightScaled: Int { _imageHeight }
-    // private var cellSizeScaled:    Int { _cellSize }
+    public var imageWidthScaled:  Int { _imageWidth }
+    public var imageHeightScaled: Int { _imageHeight }
+    public var cellSizeScaled:    Int { _cellSize }
+    public var cellSizeMaxScaled: Int { _cellSizeMax }
+
+    public func onTap(_ point: CGPoint) {
+        print("ImageView.onTap: \(point)")
+    }
 
     public init(settings: Settings) {
         _settings = settings

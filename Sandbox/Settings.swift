@@ -6,10 +6,17 @@ public class Settings: ObservableObject
 {
     public var contentView: ImageContentView.Config = ImageContentView.Config(
         hideStatusBar:  false,
-        hideToolBar:    true,
+        hideToolBar:    false,
         ignoreSafeArea: false,
         background:     Colour.yellow
     )
+
+    public var imageView: ImageView {
+        //
+        // Hookup of imageView to ImageContentView.Config is done in ImageContentView constructor.
+        //
+        self.contentView.imageView as! ImageView
+    }
 
     @Published public var cellFit: CellGridView.Fit = CellGridView.Fit.fixed
     @Published public var cellColor: Colour         = Colour.red

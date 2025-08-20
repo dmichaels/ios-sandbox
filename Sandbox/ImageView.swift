@@ -35,12 +35,14 @@ public class ImageView: ImageContentView.ImageViewable
     private var _cellShape: CellShape      = CellShape.rounded
     private var _cellShading: Bool         = Settings.Defaults.cellShading
 
-    private var _cellSizeMax: Int = 0
-    private var _cellSizeMaxUS: Int = 0
-    private var _cellPaddingMax: Int = 0
-    private var _cellPaddingMaxUS: Int = 0
-    private var _cellSizeInnerMin:  Int = 0
-    private var _cellSizeInnerMinUS: Int = 0
+    private var _cellSizeMax: Int = Display.scale(Config.Defaults.cellSizeMax, scaling: Settings.Defaults.scaling)
+    private var _cellSizeMaxUS: Int = Config.Defaults.cellSizeMax
+    private var _cellPaddingMax: Int = Display.scale(Config.Defaults.cellPaddingMax, scaling: Settings.Defaults.scaling)
+    private var _cellPaddingMaxUS: Int = Config.Defaults.cellPaddingMax
+    private var _cellSizeInnerMin:  Int = Display.scale(Config.Defaults.cellSizeInnerMin, scaling: Settings.Defaults.scaling)
+    private var _cellSizeInnerMinUS: Int = Config.Defaults.cellSizeInnerMin
+    private var _cellFitMarginMax: Int = Display.scale(Config.Defaults.cellFitMarginMax, scaling: Settings.Defaults.scaling)
+    private var _cellFitMarginMaxUS: Int = Config.Defaults.cellFitMarginMax
 
     // internal var _buffer: [UInt8] = []
     // internal var _bufferBlocks: CellGridView.BufferBlocks = CellGridView.BufferBlocks()
@@ -62,8 +64,6 @@ public class ImageView: ImageContentView.ImageViewable
 
     public init(settings: Settings) {
         _settings = settings
-        Display.scaler(Settings.Defaults.cellSizeMax, &_cellSizeMax, &_cellSizeMaxUS, scaled: false, scaling: true)
-        Display.scaler(Settings.Defaults.cellSizeInnerMin, &_cellSizeInnerMin, &_cellSizeInnerMinUS, scaled: false, scaling: true)
         print("INIT> ds: \(Display.size) ds: \(Display.scale) dw: \(Display.width) hw: \(Display.height)")
     }
 
@@ -105,7 +105,7 @@ public class ImageView: ImageContentView.ImageViewable
     private func _update(notify: Bool = true) {
         let preferred: CellGridView.PreferredSize = CellGridView.preferredSize(
             cellSize: _cellSize, viewWidth: _viewWidth, viewHeight: _viewHeight,
-            fit: _cellFit, fitMarginMax: _settings.cellFitMarginMax)
+            fit: _cellFit, fitMarginMax: _cellFitMarginMax)
         _setImageSize(preferred.viewWidth, preferred.viewHeight, scaled: _scaling)
         _setCellSize(preferred.cellSize, scaled: _scaling)
         _updateImage(notify: notify)

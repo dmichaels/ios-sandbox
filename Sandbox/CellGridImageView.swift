@@ -2,7 +2,7 @@ import SwiftUI
 import CellGridView
 import Utils
 
-public class CellGridImageView // : ImageContentView.ImageViewable
+public class CellGridImageView
 {
     private var _settings: Settings
     private var _image: CGImage = DefaultImage.instance
@@ -207,14 +207,12 @@ public class CellGridImageView // : ImageContentView.ImageViewable
             for x in stride(from: 0, to: imageWidth, by: cellSize) {
                 let xx: Int = min(x + cellSize, imageWidth)
                 let cw: Int = xx - x
-                let isPrimary: Bool = ((x + y) / cellSize) % 2 == 0
-                let cellColor: Colour = self.cellColor(ViewPoint(x / _cellSize, y / _cellSize), primary: isPrimary)
-                context.setFillColor(cellColor.cgcolor)
                 let inset: CGFloat = 1
-                let rect: CGRect = CGRect(x: x, y: y, width: cw, height: ch).insetBy(dx: inset, dy: inset)
-                let radius: CGFloat = max(0, min(rect.width, rect.height)) * cornerFraction
-                let path: CGPath = CGPath(roundedRect: rect, cornerWidth: radius, cornerHeight: radius, transform: nil)
-                context.addPath(path)
+                let rectangle: CGRect = CGRect(x: x, y: y, width: cw, height: ch).insetBy(dx: inset, dy: inset)
+                let radius: CGFloat = max(0, min(rectangle.width, rectangle.height)) * cornerFraction
+                let primary: Bool = ((x + y) / cellSize) % 2 == 0
+                context.setFillColor(self.cellColor(ViewPoint(x / _cellSize, y / _cellSize), primary: primary).cgcolor)
+                context.addPath(CGPath(roundedRect: rectangle, cornerWidth: radius, cornerHeight: radius, transform: nil))
                 context.fillPath()
             }
         }

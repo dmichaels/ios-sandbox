@@ -27,7 +27,6 @@ public class Settings: ObservableObject
     @Published public var cellShading: Bool         = true
     @Published public var viewBackground: Colour    = Colour.white
 
-    /*
     public func fromConfig(config: CellGridImageView.Config) {
         self.scaling        = config.scaling
         self.cellSize       = config.cellSize
@@ -41,10 +40,16 @@ public class Settings: ObservableObject
 
     public func toConfig() -> CellGridImageView.Config {
         return CellGridImageView.Config(
-            scaling: self.scaling
+            scaling:        self.scaling,
+            cellSize:       self.cellSize,
+            cellPadding:    self.cellPadding,
+            cellFit:        self.cellFit,
+            cellColor:      self.cellColor,
+            cellShape:      self.cellShape,
+            cellShading:    self.cellShading,
+            viewBackground: self.viewBackground
         )
     }
-    */
 
     public static let Defaults: Settings = Settings()
-}
+   }

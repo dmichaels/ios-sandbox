@@ -20,7 +20,6 @@ extension CellGridImageView
         public let cellPaddingMax: Int       = 8
         public let cellFitMarginMax: Int     = 120
 
-        /*
         public init(config: Config? = nil,
                     scaling: Bool? = nil,
                     cellSize: Int? = nil,
@@ -34,9 +33,12 @@ extension CellGridImageView
             self.scaling = scaling ?? config?.scaling ?? Config.Defaults.scaling
             self.cellSize = cellSize ?? Config.Defaults.cellSize
             self.cellPadding = cellPadding ?? Config.Defaults.cellPadding
+            self.cellFit = cellFit ?? Config.Defaults.cellFit
+            self.cellColor = cellColor ?? Config.Defaults.cellColor
+            self.cellShape = cellShape ?? Config.Defaults.cellShape
             self.cellShading = cellShading ?? Config.Defaults.cellShading
+            self.viewBackground = viewBackground ?? Config.Defaults.viewBackground
         }
-        */
 
         /*
         public class var Defaults: Config { Config.instance }

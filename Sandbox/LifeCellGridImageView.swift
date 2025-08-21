@@ -17,6 +17,33 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
                                                : super.cellColor(location, primary: primary)
     }
 
+    public func setupSettings() {
+        //
+        // Called by virtue of calling: _settings.contentView.showSettingsView()
+        //
+        _settings.scaling     = super.scaling
+        _settings.cellFit     = super.cellFit
+        _settings.cellColor   = super.cellColor
+        _settings.cellShape   = super.cellShape
+        _settings.cellShading = super.cellShading
+        _settings.cellSize    = super.cellSize // Use unscaled in SettingsView
+    }
+
+    public func applySettings() {
+        //
+        // Called by virtue of calling: _settings.contentView.applySettings()
+        //
+        let config: CellGridImageView.Config = _settings.toConfig()
+        /*
+        _setViewSize(CGSize(width: _viewWidth, height: _viewHeight), scaled: _scaling, scaling: _settings.scaling)
+        _scaling   = _settings.scaling
+        _cellFit   = _settings.cellFit
+        _cellColor = _settings.cellColor
+        _setCellSize(_settings.cellSize, scaled: false) // Use unscaled in SettingsView
+        _update()
+        */
+    }
+
     public func onTap(_ point: CGPoint) {
         let point: ViewPoint = ViewPoint(point)
         let cellLocation: CellLocation = CellLocation(point.x / super.cellSize, point.y / self.cellSize)
@@ -26,6 +53,10 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
         else {
             _activeCells.insert(cellLocation)
         }
-        super._updateImage()
+        super.updateImage()
+    }
+
+    public func onSwipeLeft() {
+        _settings.contentView.showSettingsView()
     }
 }

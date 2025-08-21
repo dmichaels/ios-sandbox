@@ -12,7 +12,7 @@ public class CellGridImageView
     // representing the UNSCALED values and the SCALED values with special variable names suffixed with "Scaled".
     // And note that when UNSCALED the scaled and unscaled variable values are the SAME, i.e. BOTH UNSCALED.
     //
-    private var _scaling:       Bool = Settings.Defaults.scaling
+    private var _scaling:       Bool = Config.Defaults.scaling
 
     private var _viewSize:      CGSize = CGSize.zero // Temporary
     private var _viewWidth:     Int  = 0
@@ -35,21 +35,21 @@ public class CellGridImageView
     private var _cellShape: CellShape      = CellShape.rounded
     private var _cellShading: Bool         = Config.Defaults.cellShading
 
-    private var _cellSizeMax: Int = Scale(Config.Defaults.cellSizeMax, Config.Defaults.scaling)
-    private var _cellSizeMaxUS: Int = Config.Defaults.cellSizeMax
-    private var _cellPaddingMax: Int = Scale(Config.Defaults.cellPaddingMax, Config.Defaults.scaling)
-    private var _cellPaddingMaxUS: Int = Config.Defaults.cellPaddingMax
-    private var _cellSizeInnerMin:  Int = Scale(Config.Defaults.cellSizeInnerMin, Config.Defaults.scaling)
-    private var _cellSizeInnerMinUS: Int = Config.Defaults.cellSizeInnerMin
-    private var _cellFitMarginMax: Int = Scale(Config.Defaults.cellFitMarginMax, Config.Defaults.scaling)
-    private var _cellFitMarginMaxUS: Int = Config.Defaults.cellFitMarginMax
+    private let _cellSizeMax: Int = Scale(Config.Defaults.cellSizeMax, Config.Defaults.scaling)
+    private let _cellSizeMaxUS: Int = Config.Defaults.cellSizeMax
+    private let _cellPaddingMax: Int = Scale(Config.Defaults.cellPaddingMax, Config.Defaults.scaling)
+    private let _cellPaddingMaxUS: Int = Config.Defaults.cellPaddingMax
+    private let _cellSizeInnerMin:  Int = Scale(Config.Defaults.cellSizeInnerMin, Config.Defaults.scaling)
+    private let _cellSizeInnerMinUS: Int = Config.Defaults.cellSizeInnerMin
+    private let _cellFitMarginMax: Int = Scale(Config.Defaults.cellFitMarginMax, Config.Defaults.scaling)
+    private let _cellFitMarginMaxUS: Int = Config.Defaults.cellFitMarginMax
 
     // internal var _buffer: [UInt8] = []
     // internal var _bufferBlocks: CellGridView.BufferBlocks = CellGridView.BufferBlocks()
 
     private var _zoomCellSize:  Int? = nil
 
-    // internal var _activeCells: Set<ViewLocation> = []
+    public var scaling: Bool               { _scaling }
 
     public var imageWidth: Int             { _imageWidthUS }
     public var imageWidthScaled: Int       { _imageWidth }
@@ -57,6 +57,12 @@ public class CellGridImageView
     public var imageHeightScaled: Int      { _imageHeight }
     public var cellSize: Int               { _cellSizeUS }
     public var cellSizeScaled: Int         { _cellSize }
+
+    public var cellFit: CellGridView.Fit   { _cellFit }
+    public var cellColor: Colour           { _cellColor }
+    public var cellShape: CellShape        { _cellShape }
+    public var cellShading: Bool           { _cellShading }
+
     public var cellSizeMax: Int            { _cellSizeMaxUS }
     public var cellSizeMaxScaled: Int      { _cellSizeMax }
     public var cellSizeInnerMin: Int       { _cellSizeInnerMinUS }
@@ -110,14 +116,15 @@ public class CellGridImageView
             fit: _cellFit, fitMarginMax: _cellFitMarginMax)
         _setImageSize(preferred.viewWidth, preferred.viewHeight, scaled: _scaling)
         _setCellSize(preferred.cellSize, scaled: _scaling)
-        _updateImage(notify: notify)
+        updateImage(notify: notify)
     }
 
-    internal func _updateImage(notify: Bool = true) {
+    internal func updateImage(notify: Bool = true) {
         _image = _createImage(imageWidth: _imageWidth, imageHeight: _imageHeight)
         if (notify) { _settings.contentView.updateImage() }
     }
 
+/*
     public func setupSettings() {
         //
         // Called by virtue of calling: _settings.contentView.showSettingsView()
@@ -139,6 +146,7 @@ public class CellGridImageView
         _setCellSize(_settings.cellSize, scaled: false) // Use unscaled in SettingsView
         _update()
     }
+*/
 
     /*
     public func config: CellGridImageView.Config {
@@ -149,7 +157,7 @@ public class CellGridImageView
                                 cellColor: _cellSize,
                                 cellShape: _cellSize,
                                 cellShading: _cellSize,
-                                viewBackground: _cellSize,)
+                                viewBackground: _cellSize)
     }
     */
 
@@ -162,11 +170,7 @@ public class CellGridImageView
         self.onZoom(zoomFactor) ; _zoomCellSize = nil
     }
 
-    public func onSwipeLeft() {
-        _settings.contentView.showSettingsView()
-    }
-
-    private func x_createImage(imageWidth: Int? = nil, imageHeight: Int? = nil, cellSize: Int? = nil) -> CGImage {
+    private func old_createImage(imageWidth: Int? = nil, imageHeight: Int? = nil, cellSize: Int? = nil) -> CGImage {
         let imageWidth:  Int = (imageWidth  ?? _imageWidth)
         let imageHeight: Int = (imageHeight ?? _imageHeight)
         let cellSize:    Int = (cellSize    ?? _cellSize)

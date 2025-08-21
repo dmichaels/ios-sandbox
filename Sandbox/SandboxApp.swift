@@ -7,7 +7,8 @@ struct SandboxApp: App {
     var body: some Scene {
         WindowGroup {
             ImageContentView(config: self.settings.contentView,
-                             imageView: ImageView(settings: self.settings),
+                             // imageView: ImageView(settings: self.settings),
+                             imageView: LifeCellGridImageView(settings: self.settings),
                              settingsView: SettingsView(settings: self.settings),
                              toolBarViews: ToolBarViews(settings: self.settings))
         }

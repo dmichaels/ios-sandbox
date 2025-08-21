@@ -2,7 +2,7 @@ import SwiftUI
 import CellGridView
 import Utils
 
-extension ImageView
+extension CellGridImageView
 {
     public class Config // : ImageContentView.Config, @unchecked Sendable
     {
@@ -19,11 +19,6 @@ extension ImageView
         public let cellSizeInnerMin: Int     = 1
         public let cellPaddingMax: Int       = 8
         public let cellFitMarginMax: Int     = 120
-
-        public let xhideStatusBar: Bool = false
-        public let xhideToolBar: Bool = false
-        public let xignoreSafeArea: Bool = false
-        public let xbackground: Colour = Colour.white
 
         /*
         public init(config: Config? = nil,

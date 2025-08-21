@@ -2,7 +2,7 @@ import SwiftUI
 import CellGridView
 import Utils
 
-public class ImageView: ImageContentView.ImageViewable
+public class CellGridImageView // : ImageContentView.ImageViewable
 {
     private var _settings: Settings
     private var _image: CGImage = DefaultImage.instance
@@ -31,7 +31,7 @@ public class ImageView: ImageContentView.ImageViewable
     private var _cellPaddingUS: Int   = Settings.Defaults.cellPadding
 
     private var _cellFit: CellGridView.Fit = Settings.Defaults.cellFit
-    private var _cellColor: Colour         = Settings.Defaults.cellColor
+    internal var _cellColor: Colour         = Settings.Defaults.cellColor
     private var _cellShape: CellShape      = CellShape.rounded
     private var _cellShading: Bool         = Settings.Defaults.cellShading
 
@@ -48,6 +48,8 @@ public class ImageView: ImageContentView.ImageViewable
     // internal var _bufferBlocks: CellGridView.BufferBlocks = CellGridView.BufferBlocks()
 
     private var _zoomCellSize:  Int? = nil
+
+    // internal var _activeCells: Set<ViewLocation> = []
 
     public var imageWidth: Int             { _imageWidthUS }
     public var imageWidthScaled: Int       { _imageWidth }
@@ -111,7 +113,7 @@ public class ImageView: ImageContentView.ImageViewable
         _updateImage(notify: notify)
     }
 
-    private func _updateImage(notify: Bool = true) {
+    internal func _updateImage(notify: Bool = true) {
         _image = _createImage(imageWidth: _imageWidth, imageHeight: _imageHeight)
         if (notify) { _settings.contentView.updateImage() }
     }
@@ -139,8 +141,8 @@ public class ImageView: ImageContentView.ImageViewable
     }
 
     /*
-    public func config: ImageView.Config {
-        return ImageView.Config(scaling: _scaling,
+    public func config: CellGridImageView.Config {
+        return CellGridImageView.Config(scaling: _scaling,
                                 cellSize: _cellSize,
                                 cellPadding: _cellSize,
                                 cellFit: _cellSize,
@@ -193,6 +195,8 @@ public class ImageView: ImageContentView.ImageViewable
         let cellSize:    Int = cellSize    ?? _cellSize
         guard imageWidth > 0, imageHeight > 0, cellSize > 0 else { return DefaultImage.instance }
         let context: CGContext = DefaultImage.context(width: imageWidth, height: imageHeight)
+        context.translateBy(x: 0, y: CGFloat(imageHeight))
+        context.scaleBy(x: 1, y: -1)
         context.setFillColor(Colour.white.cgcolor)
         context.fill(CGRect(x: 0, y: 0, width: imageWidth, height: imageHeight))
         context.setAllowsAntialiasing(true)
@@ -204,7 +208,8 @@ public class ImageView: ImageContentView.ImageViewable
                 let xx: Int = min(x + cellSize, imageWidth)
                 let cw: Int = xx - x
                 let isPrimary: Bool = ((x + y) / cellSize) % 2 == 0
-                context.setFillColor(isPrimary ? _cellColor.cgcolor : Colour.white.cgcolor)
+                let cellColor: Colour = self.cellColor(ViewPoint(x / _cellSize, y / _cellSize), primary: isPrimary)
+                context.setFillColor(cellColor.cgcolor)
                 let inset: CGFloat = 1
                 let rect: CGRect = CGRect(x: x, y: y, width: cw, height: ch).insetBy(dx: inset, dy: inset)
                 let radius: CGFloat = max(0, min(rect.width, rect.height)) * cornerFraction
@@ -217,6 +222,10 @@ public class ImageView: ImageContentView.ImageViewable
               " vs: \(_viewSize.width)x\(_viewSize.height) v: \(_viewWidth)x\(_viewHeight)" +
               " vu: \(_viewWidthUS)x\(_viewHeightUS) c: \(_cellSize) cu: \(_cellSizeUS) s: \(_scaling)")
         return context.makeImage()!
+    }
+
+    open func cellColor(_ location: ViewLocation, primary: Bool = false) -> Colour {
+        return primary ? _cellColor : Colour.white
     }
 
     private func _setViewSize(_ viewSize: CGSize, scaled: Bool = false, scaling: Bool? = nil) {

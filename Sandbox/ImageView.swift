@@ -138,6 +138,19 @@ public class ImageView: ImageContentView.ImageViewable
         _update()
     }
 
+    /*
+    public func config: ImageView.Config {
+        return ImageView.Config(scaling: _scaling,
+                                cellSize: _cellSize,
+                                cellPadding: _cellSize,
+                                cellFit: _cellSize,
+                                cellColor: _cellSize,
+                                cellShape: _cellSize,
+                                cellShading: _cellSize,
+                                viewBackground: _cellSize,)
+    }
+    */
+
     public func onZoom(_ zoomFactor: CGFloat) {
         if (_zoomCellSize == nil) { _zoomCellSize = _cellSize }
         _update(cellSize: Int(CGFloat(_zoomCellSize!) * zoomFactor).clamped(1..._cellSizeMax))

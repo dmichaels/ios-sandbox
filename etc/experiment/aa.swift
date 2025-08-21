@@ -14,24 +14,22 @@ public class CellGridView
         public let cellPaddingMax: Int       = 8
         public let cellFitMarginMax: Int     = 120
 
-        internal required init(defaults: Bool) {print("CellGridView.Config.init(defaults)")}
-        public init(
-            config: CellGridView.Config? = nil,
-            scaling: Bool? = nil,
-            cellSize: Int? = nil,
-            cellPadding: Int? = nil,
-            cellShading: Bool? = nil
+        public init(config: Config? = nil,
+                    scaling: Bool? = nil,
+                    cellSize: Int? = nil,
+                    cellPadding: Int? = nil,
+                    cellShading: Bool? = nil
         )
         {
-            print("CellGridView.Config.init(...)")
-            self.scaling = scaling ?? config?.scaling ?? CellGridView.Config.Defaults.scaling
-            self.cellSize = cellSize ?? CellGridView.Config.Defaults.cellSize
-            self.cellPadding = cellPadding ?? CellGridView.Config.Defaults.cellPadding
-            self.cellShading = cellShading ?? CellGridView.Config.Defaults.cellShading
+            self.scaling = scaling ?? config?.scaling ?? Config.Defaults.scaling
+            self.cellSize = cellSize ?? Config.Defaults.cellSize
+            self.cellPadding = cellPadding ?? Config.Defaults.cellPadding
+            self.cellShading = cellShading ?? Config.Defaults.cellShading
         }
 
-        private static let instance: CellGridView.Config = CellGridView.Config(defaults: true)
-        public class var Defaults: CellGridView.Config { CellGridView.Config.instance }
+        public class var Defaults: Config { Config.instance }
+        private static let instance: Config = Config(defaults: true)
+        internal init(defaults: Bool) {}
     }
 }
 
@@ -42,8 +40,7 @@ public class ImageView: CellGridView
         public private(set) var activeColor: Color = Color.black
         public private(set) var inactiveColor: Color = Color.white
 
-        internal required init(defaults: Bool) { print("ImageView.Config.init(defaults)") ; super.init(defaults: defaults) }
-        public init(config: ImageView.Config? = nil,
+        public init(config: Config? = nil,
                     scaling: Bool? = nil,
                     cellSize: Int? = nil,
                     cellPadding: Int? = nil,
@@ -52,8 +49,8 @@ public class ImageView: CellGridView
                     inactiveColor: Color? = nil
         )
         {
-            self.activeColor = activeColor ?? config?.activeColor ?? ImageView.Config.Defaults.activeColor
-            self.inactiveColor = inactiveColor ?? config?.inactiveColor ?? ImageView.Config.Defaults.inactiveColor
+            self.activeColor = activeColor ?? config?.activeColor ?? Config.Defaults.activeColor
+            self.inactiveColor = inactiveColor ?? config?.inactiveColor ?? Config.Defaults.inactiveColor
             super.init(config: config,
                        scaling: scaling,
                        cellSize: cellSize,
@@ -61,15 +58,20 @@ public class ImageView: CellGridView
                        cellShading: cellShading)
         }
 
-        public static let instance: ImageView.Config = ImageView.Config(defaults: true)
-        public override class var Defaults: ImageView.Config { ImageView.Config.instance }
+        public override class var Defaults: Config { Config.instance }
+        private static let instance: Config = Config(defaults: true)
+        internal override init(defaults: Bool) { super.init(defaults: defaults) }
     }
 }
 
-let x = ImageView.Config.Defaults
-let y = ImageView.Config.Defaults
+public class Settings: ObservableObject
+{
+}
 
-/*
+// let x = ImageView.Config.Defaults
+// let y = ImageView.Config.Defaults
+// let z = ImageView.Config.Defaults
+
 var config: ImageView.Config = ImageView.Config(scaling: true)
 print(config.scaling)
 print(config.cellSize)
@@ -83,6 +85,9 @@ public class B: A {
 }
 
 print("FOO")
-let x = CellGridView.Config.Defaults
+var x = CellGridView.Config.Defaults
+x = CellGridView.Config.Defaults
+x = CellGridView.Config.Defaults
+x = CellGridView.Config.Defaults
+x = CellGridView.Config.Defaults
 print(x.cellSize)
-*/

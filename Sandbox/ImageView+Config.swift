@@ -4,7 +4,7 @@ import Utils
 
 extension ImageView
 {
-    public struct Config
+    public class Config // : ImageContentView.Config, @unchecked Sendable
     {
         public var scaling: Bool             = true
         public var cellSize: Int             = 43
@@ -20,6 +20,33 @@ extension ImageView
         public let cellPaddingMax: Int       = 8
         public let cellFitMarginMax: Int     = 120
 
-        public static let Defaults: Config = Config()
+        public let xhideStatusBar: Bool = false
+        public let xhideToolBar: Bool = false
+        public let xignoreSafeArea: Bool = false
+        public let xbackground: Colour = Colour.white
+
+        /*
+        public init(config: Config? = nil,
+                    scaling: Bool? = nil,
+                    cellSize: Int? = nil,
+                    cellPadding: Int? = nil,
+                    cellFit: CellGridView.Fit? = nil,
+                    cellColor: Colour? = nil,
+                    cellShape: CellShape? = nil,
+                    cellShading: Bool? = nil,
+                    viewBackground: Colour? = nil)
+        {
+            self.scaling = scaling ?? config?.scaling ?? Config.Defaults.scaling
+            self.cellSize = cellSize ?? Config.Defaults.cellSize
+            self.cellPadding = cellPadding ?? Config.Defaults.cellPadding
+            self.cellShading = cellShading ?? Config.Defaults.cellShading
+        }
+        */
+
+        public class var Defaults: Config { Config.instance }
+        private static let instance: Config = Config(defaults: true)
+        public init(defaults _: Bool) { }
+
+        // public static let Defaults: Config = Config()
     }
 }

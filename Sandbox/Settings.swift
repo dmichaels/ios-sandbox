@@ -27,6 +27,7 @@ public class Settings: ObservableObject
     @Published public var cellShading: Bool         = true
     @Published public var viewBackground: Colour    = Colour.white
 
+    /*
     public func fromConfig(config: ImageView.Config) {
         self.scaling        = config.scaling
         self.cellSize       = config.cellSize
@@ -43,6 +44,7 @@ public class Settings: ObservableObject
             scaling: self.scaling
         )
     }
+    */
 
     public static let Defaults: Settings = Settings()
 }

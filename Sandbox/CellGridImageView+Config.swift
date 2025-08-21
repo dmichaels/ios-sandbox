@@ -4,13 +4,13 @@ import Utils
 
 extension CellGridImageView
 {
-    public class Config // : ImageContentView.Config, @unchecked Sendable
+    public class Config
     {
         public var scaling: Bool             = true
         public var cellSize: Int             = 43
         public var cellPadding: Int          = 1
         public var cellFit: CellGridView.Fit = CellGridView.Fit.fixed
-        public var cellColor: Colour         = Colour.red
+        public var cellColor: Colour         = Colour.blue
         public var cellShape: CellShape      = CellShape.rounded
         public var cellShading: Bool         = false
         public var viewBackground: Colour    = Colour.white
@@ -38,10 +38,12 @@ extension CellGridImageView
         }
         */
 
+        /*
         public class var Defaults: Config { Config.instance }
         private static let instance: Config = Config(defaults: true)
-        public init(defaults _: Bool) { }
+        public init(defaults _: Bool) {}
+        */
 
-        // public static let Defaults: Config = Config()
+        public static let Defaults: Config = Config()
     }
 }

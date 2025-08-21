@@ -25,23 +25,23 @@ public class CellGridImageView
     private var _imageHeight:   Int  = 0
     private var _imageHeightUS: Int  = 0
 
-    private var _cellSize: Int        = Display.scale(Settings.Defaults.cellSize, scaling: Settings.Defaults.scaling)
-    private var _cellSizeUS: Int      = Settings.Defaults.cellSize
-    private var _cellPadding: Int     = Display.scale(Settings.Defaults.cellPadding, scaling: Settings.Defaults.scaling)
-    private var _cellPaddingUS: Int   = Settings.Defaults.cellPadding
+    private var _cellSize: Int        = Scale(Config.Defaults.cellSize, Config.Defaults.scaling)
+    private var _cellSizeUS: Int      = Config.Defaults.cellSize
+    private var _cellPadding: Int     = Scale(Config.Defaults.cellPadding, Config.Defaults.scaling)
+    private var _cellPaddingUS: Int   = Config.Defaults.cellPadding
 
-    private var _cellFit: CellGridView.Fit = Settings.Defaults.cellFit
-    private var _cellColor: Colour         = Settings.Defaults.cellColor
+    private var _cellFit: CellGridView.Fit = Config.Defaults.cellFit
+    private var _cellColor: Colour         = Config.Defaults.cellColor
     private var _cellShape: CellShape      = CellShape.rounded
-    private var _cellShading: Bool         = Settings.Defaults.cellShading
+    private var _cellShading: Bool         = Config.Defaults.cellShading
 
-    private var _cellSizeMax: Int = Display.scale(Config.Defaults.cellSizeMax, scaling: Settings.Defaults.scaling)
+    private var _cellSizeMax: Int = Scale(Config.Defaults.cellSizeMax, Config.Defaults.scaling)
     private var _cellSizeMaxUS: Int = Config.Defaults.cellSizeMax
-    private var _cellPaddingMax: Int = Display.scale(Config.Defaults.cellPaddingMax, scaling: Settings.Defaults.scaling)
+    private var _cellPaddingMax: Int = Scale(Config.Defaults.cellPaddingMax, Config.Defaults.scaling)
     private var _cellPaddingMaxUS: Int = Config.Defaults.cellPaddingMax
-    private var _cellSizeInnerMin:  Int = Display.scale(Config.Defaults.cellSizeInnerMin, scaling: Settings.Defaults.scaling)
+    private var _cellSizeInnerMin:  Int = Scale(Config.Defaults.cellSizeInnerMin, Config.Defaults.scaling)
     private var _cellSizeInnerMinUS: Int = Config.Defaults.cellSizeInnerMin
-    private var _cellFitMarginMax: Int = Display.scale(Config.Defaults.cellFitMarginMax, scaling: Settings.Defaults.scaling)
+    private var _cellFitMarginMax: Int = Scale(Config.Defaults.cellFitMarginMax, Config.Defaults.scaling)
     private var _cellFitMarginMaxUS: Int = Config.Defaults.cellFitMarginMax
 
     // internal var _buffer: [UInt8] = []

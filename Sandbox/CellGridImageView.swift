@@ -31,7 +31,7 @@ public class CellGridImageView
     private var _cellPaddingUS: Int   = Settings.Defaults.cellPadding
 
     private var _cellFit: CellGridView.Fit = Settings.Defaults.cellFit
-    internal var _cellColor: Colour         = Settings.Defaults.cellColor
+    private var _cellColor: Colour         = Settings.Defaults.cellColor
     private var _cellShape: CellShape      = CellShape.rounded
     private var _cellShading: Bool         = Settings.Defaults.cellShading
 

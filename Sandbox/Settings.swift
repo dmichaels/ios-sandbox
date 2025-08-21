@@ -7,8 +7,8 @@ public class Settings: ObservableObject
     public var contentView: ImageContentView.Config = ImageContentView.Config(
         hideStatusBar:  false,
         hideToolBar:    false,
-        ignoreSafeArea: false,
-        background:     LifeCellGridImageView.Config.Defaults.viewBackground
+        ignoreSafeArea: true,
+        // background:     LifeCellGridImageView.Config.Defaults.viewBackground
     )
 
     public var imageView: LifeCellGridImageView {
@@ -35,7 +35,7 @@ public class Settings: ObservableObject
         self.cellColor      = config.cellColor
         self.cellShape      = config.cellShape
         self.cellShading    = config.cellShading
-        self.viewBackground = config.viewBackground
+        // self.viewBackground = config.viewBackground
     }
 
     public func toConfig() -> CellGridImageView.Config {
@@ -47,9 +47,9 @@ public class Settings: ObservableObject
             cellColor:      self.cellColor,
             cellShape:      self.cellShape,
             cellShading:    self.cellShading,
-            viewBackground: self.viewBackground
+            // viewBackground: self.viewBackground
         )
     }
 
     public static let Defaults: Settings = Settings()
-   }
+}

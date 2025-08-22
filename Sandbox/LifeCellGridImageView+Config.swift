@@ -9,7 +9,11 @@ extension LifeCellGridImageView
         public var inactiveCellColor: Colour = Settings.Defaults.inactiveCellColor
         public var viewBackground: Colour    = Colour.yellow
 
-        public init(config: Config? = nil,
+        // public init(config: CellGridImageView.Config? = nil) {
+            // super.init(config)
+        // }
+
+        public init(_ config: Config? = nil,
                     scaling: Bool? = nil,
                     cellSize: Int? = nil,
                     cellPadding: Int? = nil,

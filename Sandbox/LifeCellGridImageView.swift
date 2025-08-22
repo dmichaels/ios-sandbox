@@ -11,6 +11,13 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
 
     public init(settings: Settings) {
         _settings = settings
+        super.init(settings.config)
+    }
+
+    public override var config: Config {
+        let config: LifeCellGridImageView.Config = Config()
+        super.setupConfig(config)
+        return config
     }
 
     public override func cellColor(_ location: ViewLocation, primary: Bool = false) -> Colour {
@@ -20,18 +27,21 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
 
     public func setupSettings() {
         //
+        // Setup our Settings object (_settings) from our data.
+        //
         // Called by virtue of calling: _settings.contentView.showSettingsView()
         //
-        var x = 1
         // _settings.fromConfig(
-        /*
-        _settings.scaling     = super.scaling
-        _settings.cellFit     = super.cellFit
-        _settings.cellColor   = super.cellColor
-        _settings.cellShape   = super.cellShape
-        _settings.cellShading = super.cellShading
-        _settings.cellSize    = super.cellSize // Use unscaled in SettingsView
-        */
+        // let x = super.config
+        _settings.scaling           = super.scaling
+        _settings.cellSize          = super.cellSize // Note unscaled for SettingsView
+        _settings.cellPadding       = super.cellPadding
+        _settings.cellFit           = super.cellFit
+        _settings.cellColor         = super.cellColor
+        _settings.cellShape         = super.cellShape
+        _settings.cellShading       = super.cellShading
+        _settings.activeCellColor   = self._activeCellColor
+        _settings.inactiveCellColor = self._inactiveCellColor
     }
 
     public func applySettings() {

@@ -84,5 +84,7 @@ public class Settings: ObservableObject
                                             viewBackground:    self.viewBackground)
     }
 
+    public var config: LifeCellGridImageView.Config { self.toConfig() }
+
     public static let Defaults: Settings = Settings()
 }

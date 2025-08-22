@@ -14,7 +14,6 @@ public class CellGridImageView
     //
     private var _scaling:       Bool = Config.Defaults.scaling
 
-    // private var _viewSize:      CGSize       = CGSize.zero // Temporary
     private var _viewWidth:     Int        = 0
     private var _viewWidthUS:   Int        = 0
     private var _viewHeight:    Int        = 0
@@ -57,6 +56,8 @@ public class CellGridImageView
     public var imageHeightScaled: Int      { _imageHeight }
     public var cellSize: Int               { _cellSizeUS }
     public var cellSizeScaled: Int         { _cellSize }
+    public var cellPadding: Int            { _cellPaddingUS }
+    public var cellPaddingScaled: Int      { _cellPadding }
 
     public var cellFit: CellGridView.Fit   { _cellFit }
     public var cellColor: Colour           { _cellColor }
@@ -74,11 +75,39 @@ public class CellGridImageView
     public var size:  CGSize  { CGSize(width: _imageWidthUS, height: _imageHeightUS) }
     public var scale: CGFloat { _scaling ? Display.scale : 1.0 }
 
+    public init(_ config: Config) {
+        self.update(config)
+    }
+
+    public var config: Config {
+        var config = Config()
+        self.setupConfig(config)
+        return config
+        /*
+        return Config(scaling:     _scaling,
+               cellSize:    _cellSizeUS,
+               cellPadding: _cellPaddingUS,
+               cellFit:     _cellFit,
+               cellColor:   _cellColor,
+               cellShape:   _cellShape,
+               cellShading: _cellShading)
+        */
+    }
+
+    public func setupConfig(_ config: Config) {
+        config.scaling      = _scaling
+        config.cellSize     = _cellSizeUS
+        config.cellPadding  = _cellPaddingUS
+        config.cellFit      = _cellFit
+        config.cellColor    = _cellColor
+        config.cellShape    = _cellShape
+        config.cellShading  = _cellShading
+    }
+
     public func update(viewSize: CGSize) {
 
         guard viewSize.width > 0, viewSize.height > 0 else { return }
 
-        // _viewSize = viewSize
         _setViewSize(viewSize, scaled: false) // Assume viewSize (from ContentView) is always unscaled
 
 /*
@@ -116,15 +145,13 @@ public class CellGridImageView
 
     public func update(_ config: Config) {
         _setViewSize(CGSize(width: _viewWidth, height: _viewHeight), scaled: _scaling, scaling: config.scaling)
-        _scaling   = config.scaling
-        _cellFit   = config.cellFit
-        _cellColor = config.cellColor
+        _scaling     = config.scaling
+        _cellFit     = config.cellFit
+        _cellColor   = config.cellColor
+        _cellShape   = config.cellShape
+        _cellShading = config.cellShading
         _setCellSize(config.cellSize, scaled: false) // Use unscaled in SettingsView
         _update()
-    }
-
-    public var config: Config {
-        Config()
     }
 
     open func updateImage(notify: Bool = true) {
@@ -191,7 +218,6 @@ public class CellGridImageView
             }
         }
         print("IM> i: \(imageWidth)x\(imageHeight) iu: \(_imageWidthUS)x\(_imageHeightUS)" +
-              // " vs: \(_viewSize.width)x\(_viewSize.height)" +
               " v: \(_viewWidth)x\(_viewHeight)" +
               " vu: \(_viewWidthUS)x\(_viewHeightUS) c: \(_cellSize) cu: \(_cellSizeUS) s: \(_scaling)")
         return context.makeImage()!

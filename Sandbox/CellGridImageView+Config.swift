@@ -19,7 +19,7 @@ extension CellGridImageView
         public var cellPaddingMax: Int       = 8
         public var cellFitMarginMax: Int     = 120
 
-        public init(config: Config? = nil,
+        public init(_ config: Config? = nil,
                     scaling: Bool? = nil,
                     cellSize: Int? = nil,
                     cellPadding: Int? = nil,

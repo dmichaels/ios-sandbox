@@ -21,6 +21,10 @@ public struct SettingsView: ImageContentView.SettingsViewable {
                 IconLabel("Cell Color", "COLOR")
                 ColorPicker("", selection: $settings.cellColor.picker)
             }
+            HStack {
+                IconLabel("Active Cell Color", "COLOR")
+                ColorPicker("", selection: $settings.activeCellColor.picker)
+            }
             VStack {
                 HStack {
                     IconLabel("Cell Size", "magnifyingglass")

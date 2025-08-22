@@ -9,14 +9,11 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
     private var _inactiveCellColor: Colour = Config.Defaults.inactiveCellColor
     private var _activeCells: Set<ViewLocation> = []
 
-    public override init(settings: Settings) {
+    public init(settings: Settings) {
         _settings = settings
-        super.init(settings: settings)
     }
 
     public override func cellColor(_ location: ViewLocation, primary: Bool = false) -> Colour {
-        // return _activeCells.contains(location) ? (primary ? Colour.red : Colour.red.lighten(by: 0.5))
-        //                                        : super.cellColor(location, primary: primary)
         return _activeCells.contains(location) ? (primary ? self._activeCellColor : self._inactiveCellColor)
                                                : super.cellColor(location, primary: primary)
     }
@@ -25,27 +22,26 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
         //
         // Called by virtue of calling: _settings.contentView.showSettingsView()
         //
+        var x = 1
+        // _settings.fromConfig(
+        /*
         _settings.scaling     = super.scaling
         _settings.cellFit     = super.cellFit
         _settings.cellColor   = super.cellColor
         _settings.cellShape   = super.cellShape
         _settings.cellShading = super.cellShading
         _settings.cellSize    = super.cellSize // Use unscaled in SettingsView
+        */
     }
 
     public func applySettings() {
         //
         // Called by virtue of calling: _settings.contentView.applySettings()
         //
-        let config: CellGridImageView.Config = _settings.toConfig()
-        /*
-        _setViewSize(CGSize(width: _viewWidth, height: _viewHeight), scaled: _scaling, scaling: _settings.scaling)
-        _scaling   = _settings.scaling
-        _cellFit   = _settings.cellFit
-        _cellColor = _settings.cellColor
-        _setCellSize(_settings.cellSize, scaled: false) // Use unscaled in SettingsView
-        _update()
-        */
+        let config: Config = _settings.toConfig()
+        _activeCellColor = config.activeCellColor
+        _inactiveCellColor = config.inactiveCellColor
+        super.update(config)
     }
 
     public override func updateImage(notify: Bool = true) {
@@ -64,7 +60,7 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
         else {
             _activeCells.insert(cellLocation)
         }
-        super.updateImage()
+        self.updateImage()
     }
 
     public func onSwipeLeft() {

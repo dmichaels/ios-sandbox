@@ -37,7 +37,7 @@ extension CellGridImageView
             self.cellShading = cellShading ?? Config.Defaults.cellShading
         }
 
-        public init(defaults _: Bool) {}
-        public static let Defaults: Config = Config(defaults: true)
+        public required init(defaults _: Bool) {}
+        public class var Defaults: Self { Self.init(defaults: true) }
     }
 }

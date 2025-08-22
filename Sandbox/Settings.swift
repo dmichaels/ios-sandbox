@@ -25,21 +25,26 @@ public class Settings: ObservableObject
     @Published public var cellColor: Colour         = Colour.blue
     @Published public var cellShape: CellShape      = CellShape.rounded
     @Published public var cellShading: Bool         = true
-    @Published public var viewBackground: Colour    = Colour.white
 
-    public func fromConfig(config: CellGridImageView.Config) {
-        self.scaling        = config.scaling
-        self.cellSize       = config.cellSize
-        self.cellPadding    = config.cellPadding
-        self.cellFit        = config.cellFit
-        self.cellColor      = config.cellColor
-        self.cellShape      = config.cellShape
-        self.cellShading    = config.cellShading
-        // self.viewBackground = config.viewBackground
+    @Published public var activeCellColor: Colour   = LifeCellGridImageView.Config.Defaults.activeCellColor
+    @Published public var inactiveCellColor: Colour = LifeCellGridImageView.Config.Defaults.inactiveCellColor
+    @Published public var viewBackground: Colour    = LifeCellGridImageView.Config.Defaults.viewBackground
+
+    public func fromConfig(config: LifeCellGridImageView.Config) {
+        self.scaling           = config.scaling
+        self.cellSize          = config.cellSize
+        self.cellPadding       = config.cellPadding
+        self.cellFit           = config.cellFit
+        self.cellColor         = config.cellColor
+        self.cellShape         = config.cellShape
+        self.cellShading       = config.cellShading
+        self.activeCellColor   = config.activeCellColor
+        self.inactiveCellColor = config.activeCellColor
+        self.viewBackground    = config.viewBackground
     }
 
     public func toConfig() -> CellGridImageView.Config {
-        return CellGridImageView.Config(
+        return LifeCellGridImageView.Config(
             scaling:        self.scaling,
             cellSize:       self.cellSize,
             cellPadding:    self.cellPadding,

@@ -5,6 +5,8 @@ import Utils
 public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageViewable
 {
     private var _settings: Settings
+    private var _activeCellColor: Colour = Config.Defaults.activeCellColor
+    private var _inactiveCellColor: Colour = Config.Defaults.inactiveCellColor
     private var _activeCells: Set<ViewLocation> = []
 
     public override init(settings: Settings) {
@@ -13,7 +15,9 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
     }
 
     public override func cellColor(_ location: ViewLocation, primary: Bool = false) -> Colour {
-        return _activeCells.contains(location) ? (primary ? Colour.red : Colour.red.lighten(by: 0.5))
+        // return _activeCells.contains(location) ? (primary ? Colour.red : Colour.red.lighten(by: 0.5))
+        //                                        : super.cellColor(location, primary: primary)
+        return _activeCells.contains(location) ? (primary ? self._activeCellColor : self._inactiveCellColor)
                                                : super.cellColor(location, primary: primary)
     }
 
@@ -42,6 +46,13 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
         _setCellSize(_settings.cellSize, scaled: false) // Use unscaled in SettingsView
         _update()
         */
+    }
+
+    public override func updateImage(notify: Bool = true) {
+        super.updateImage(notify: notify)
+        if (notify) {
+            _settings.contentView.updateImage()
+        }
     }
 
     public func onTap(_ point: CGPoint) {

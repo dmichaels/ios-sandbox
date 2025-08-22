@@ -20,16 +20,16 @@ public class Settings: ObservableObject
     }
 
     @Published public var scaling: Bool             = true
-    @Published public var cellSize: Int             = 43
+    @Published public var cellSize: Int             = 23
     @Published public var cellPadding: Int          = 1
     @Published public var cellFit: CellGridView.Fit = CellGridView.Fit.fixed
     @Published public var cellColor: Colour         = Colour.blue
     @Published public var cellShape: CellShape      = CellShape.rounded
     @Published public var cellShading: Bool         = true
 
-    @Published public var activeCellColor: Colour   = Colour.red // LifeCellGridImageView.Config.Defaults.activeCellColor
-    @Published public var inactiveCellColor: Colour = Colour.magenta // LifeCellGridImageView.Config.Defaults.inactiveCellColor
-    @Published public var viewBackground: Colour    = Colour.yellow // LifeCellGridImageView.Config.Defaults.viewBackground
+    @Published public var activeCellColor: Colour   = Colour.red
+    @Published public var inactiveCellColor: Colour = Colour.green
+    @Published public var viewBackground: Colour    = Colour.yellow
 
     public func fromConfig(config: LifeCellGridImageView.Config) {
         self.scaling           = config.scaling

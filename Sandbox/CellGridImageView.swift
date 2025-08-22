@@ -119,9 +119,9 @@ public class CellGridImageView
         updateImage(notify: notify)
     }
 
-    internal func updateImage(notify: Bool = true) {
+    open func updateImage(notify: Bool = true) {
         _image = _createImage(imageWidth: _imageWidth, imageHeight: _imageHeight)
-        if (notify) { _settings.contentView.updateImage() }
+        // if (notify) { _settings.contentView.updateImage() }
     }
 
 /*

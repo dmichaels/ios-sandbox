@@ -5,8 +5,8 @@ extension LifeCellGridImageView
 {
     public class Config: CellGridImageView.Config
     {
-        public var activeCellColor: Colour   = Colour.white // Settings.Defaults.activeCellColor
-        public var inactiveCellColor: Colour = Colour.gray
+        public var activeCellColor: Colour   = Settings.Defaults.activeCellColor
+        public var inactiveCellColor: Colour = Settings.Defaults.inactiveCellColor
         public var viewBackground: Colour    = Colour.yellow
 
         public init(config: Config? = nil,

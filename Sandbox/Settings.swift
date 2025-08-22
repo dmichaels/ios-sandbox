@@ -8,7 +8,7 @@ public class Settings: ObservableObject
         hideStatusBar:  false,
         hideToolBar:    false,
         ignoreSafeArea: true,
-        // background:     LifeCellGridImageView.Config.Defaults.viewBackground
+        background:     LifeCellGridImageView.Config.Defaults.viewBackground
     )
 
     public var imageView: LifeCellGridImageView {
@@ -43,16 +43,18 @@ public class Settings: ObservableObject
         self.viewBackground    = config.viewBackground
     }
 
-    public func toConfig() -> CellGridImageView.Config {
+    public func toConfig() -> LifeCellGridImageView.Config {
         return LifeCellGridImageView.Config(
-            scaling:        self.scaling,
-            cellSize:       self.cellSize,
-            cellPadding:    self.cellPadding,
-            cellFit:        self.cellFit,
-            cellColor:      self.cellColor,
-            cellShape:      self.cellShape,
-            cellShading:    self.cellShading,
-            // viewBackground: self.viewBackground
+            scaling:           self.scaling,
+            cellSize:          self.cellSize,
+            cellPadding:       self.cellPadding,
+            cellFit:           self.cellFit,
+            cellColor:         self.cellColor,
+            cellShape:         self.cellShape,
+            cellShading:       self.cellShading,
+            activeCellColor:   self.activeCellColor,
+            inactiveCellColor: self.inactiveCellColor,
+            viewBackground:    self.viewBackground
         )
     }
 

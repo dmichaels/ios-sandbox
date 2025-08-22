@@ -7,7 +7,7 @@ extension LifeCellGridImageView
     {
         public var activeCellColor: Colour   = Colour.red
         public var inactiveCellColor: Colour = Colour.gray
-        public var viewBackground: Colour    = Colour.white
+        public var viewBackground: Colour    = Colour.yellow
 
         public init(config: Config? = nil,
                     scaling: Bool? = nil,

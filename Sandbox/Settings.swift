@@ -8,12 +8,13 @@ public class Settings: ObservableObject
         hideStatusBar:  false,
         hideToolBar:    false,
         ignoreSafeArea: true,
-        background:     LifeCellGridImageView.Config.Defaults.viewBackground
+        background:     Colour.cyan
     )
 
     public var imageView: LifeCellGridImageView {
         //
         // Hookup of imageView to ImageContentView.Config is done in ImageContentView constructor.
+        // Used in SettingsView.
         //
         self.contentView.imageView as! LifeCellGridImageView
     }
@@ -26,9 +27,9 @@ public class Settings: ObservableObject
     @Published public var cellShape: CellShape      = CellShape.rounded
     @Published public var cellShading: Bool         = true
 
-    @Published public var activeCellColor: Colour   = LifeCellGridImageView.Config.Defaults.activeCellColor
-    @Published public var inactiveCellColor: Colour = LifeCellGridImageView.Config.Defaults.inactiveCellColor
-    @Published public var viewBackground: Colour    = LifeCellGridImageView.Config.Defaults.viewBackground
+    @Published public var activeCellColor: Colour   = Colour.red // LifeCellGridImageView.Config.Defaults.activeCellColor
+    @Published public var inactiveCellColor: Colour = Colour.magenta // LifeCellGridImageView.Config.Defaults.inactiveCellColor
+    @Published public var viewBackground: Colour    = Colour.yellow // LifeCellGridImageView.Config.Defaults.viewBackground
 
     public func fromConfig(config: LifeCellGridImageView.Config) {
         self.scaling           = config.scaling

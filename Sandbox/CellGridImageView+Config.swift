@@ -14,10 +14,10 @@ extension CellGridImageView
         public var cellShape: CellShape      = CellShape.rounded
         public var cellShading: Bool         = false
 
-        public let cellSizeMax: Int          = 200
-        public let cellSizeInnerMin: Int     = 1
-        public let cellPaddingMax: Int       = 8
-        public let cellFitMarginMax: Int     = 120
+        public var cellSizeMax: Int          = 200
+        public var cellSizeInnerMin: Int     = 1
+        public var cellPaddingMax: Int       = 8
+        public var cellFitMarginMax: Int     = 120
 
         public init(config: Config? = nil,
                     scaling: Bool? = nil,
@@ -28,13 +28,16 @@ extension CellGridImageView
                     cellShape: CellShape? = nil,
                     cellShading: Bool? = nil)
         {
-            self.scaling     = scaling     ?? config?.scaling ?? Config.Defaults.scaling
-            self.cellSize    = cellSize    ?? Config.Defaults.cellSize
-            self.cellPadding = cellPadding ?? Config.Defaults.cellPadding
-            self.cellFit     = cellFit     ?? Config.Defaults.cellFit
-            self.cellColor   = cellColor   ?? Config.Defaults.cellColor
-            self.cellShape   = cellShape   ?? Config.Defaults.cellShape
-            self.cellShading = cellShading ?? Config.Defaults.cellShading
+            let c: Config? = config
+            let d: Config  = Config.Defaults
+
+            self.scaling     = scaling     ?? c?.scaling     ?? d.scaling
+            self.cellSize    = cellSize    ?? c?.cellSize    ?? d.cellSize
+            self.cellPadding = cellPadding ?? c?.cellPadding ?? d.cellPadding
+            self.cellFit     = cellFit     ?? c?.cellFit     ?? d.cellFit
+            self.cellColor   = cellColor   ?? c?.cellColor   ?? d.cellColor
+            self.cellShape   = cellShape   ?? c?.cellShape   ?? d.cellShape
+            self.cellShading = cellShading ?? c?.cellShading ?? d.cellShading
         }
 
         public required init(defaults _: Bool) {}

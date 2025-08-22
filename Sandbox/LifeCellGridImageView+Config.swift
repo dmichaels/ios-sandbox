@@ -5,7 +5,7 @@ extension LifeCellGridImageView
 {
     public class Config: CellGridImageView.Config
     {
-        public var activeCellColor: Colour   = Colour.red
+        public var activeCellColor: Colour   = Colour.white // Settings.Defaults.activeCellColor
         public var inactiveCellColor: Colour = Colour.gray
         public var viewBackground: Colour    = Colour.yellow
 
@@ -21,12 +21,8 @@ extension LifeCellGridImageView
                     inactiveCellColor: Colour? = nil,
                     viewBackground: Colour? = nil)
         {
-            let c: LifeCellGridImageView.Config? = config
-            let d: LifeCellGridImageView.Config = Config.Defaults
-
-            self.activeCellColor   = activeCellColor   ?? c?.activeCellColor   ?? d.activeCellColor
-            self.inactiveCellColor = inactiveCellColor ?? c?.inactiveCellColor ?? d.inactiveCellColor
-            self.viewBackground    = viewBackground    ?? c?.viewBackground    ?? d.viewBackground
+            let c: Config? = config
+            let d: Config  = Config.Defaults
 
             super.init(scaling:     scaling,
                        cellSize:    cellSize,
@@ -35,8 +31,12 @@ extension LifeCellGridImageView
                        cellColor:   cellColor,
                        cellShape:   cellShape,
                        cellShading: cellShading)
+
+            self.activeCellColor   = activeCellColor   ?? c?.activeCellColor   ?? d.activeCellColor
+            self.inactiveCellColor = inactiveCellColor ?? c?.inactiveCellColor ?? d.inactiveCellColor
+            self.viewBackground    = viewBackground    ?? c?.viewBackground    ?? d.viewBackground
         }
 
-        public required init(defaults: Bool) { super.init(defaults: true) }
+        public required init(defaults: Bool) { super.init(defaults: true) } // For base-class/inherited Defaults
     }
 }

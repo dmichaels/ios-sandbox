@@ -26,6 +26,9 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
         // Called by virtue of calling: _settings.contentView.showSettingsView()
         //
         let config: Config = Config(self)
+        _settings.fromConfig(config)
+
+        /*
         _settings.scaling           = config.scaling
         _settings.cellSize          = config.cellSize // Note unscaled for SettingsView
         _settings.cellPadding       = config.cellPadding
@@ -35,6 +38,8 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
         _settings.cellShading       = config.cellShading
         _settings.activeCellColor   = config.activeCellColor
         _settings.inactiveCellColor = config.inactiveCellColor
+        */
+
         /*
         _settings.scaling           = super.scaling
         _settings.cellSize          = super.cellSize // Note unscaled for SettingsView

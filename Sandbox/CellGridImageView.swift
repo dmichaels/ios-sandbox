@@ -34,8 +34,8 @@ public class CellGridImageView
     private var _cellShape: CellShape      = CellShape.rounded
     private var _cellShading: Bool         = Config.Defaults.cellShading
 
-    private let _cellSizeMax: Int          = Scale(Config.Defaults.cellSizeMax, Config.Defaults.scaling)
-    private let _cellSizeMaxUS: Int        = Config.Defaults.cellSizeMax
+    private var _cellSizeMax: Int          = Scale(Config.Defaults.cellSizeMax, Config.Defaults.scaling)
+    private var _cellSizeMaxUS: Int        = Config.Defaults.cellSizeMax
     private let _cellPaddingMax: Int       = Scale(Config.Defaults.cellPaddingMax, Config.Defaults.scaling)
     private let _cellPaddingMaxUS: Int     = Config.Defaults.cellPaddingMax
     private let _cellSizeInnerMin:  Int    = Scale(Config.Defaults.cellSizeInnerMin, Config.Defaults.scaling)
@@ -82,7 +82,7 @@ public class CellGridImageView
     internal func setupConfig(_ config: Config) {
         config.scaling          = _scaling
         config.cellSize         = _cellSizeUS
-        config.cellSizeMax      = _cellSizeMax
+        config.cellSizeMax      = _cellSizeMaxUS
         config.cellSizeInnerMin = _cellSizeInnerMin
         config.cellPadding      = _cellPaddingUS
         config.cellPaddingMax   = _cellPaddingMax
@@ -139,6 +139,7 @@ public class CellGridImageView
         _cellColor   = config.cellColor
         _cellShape   = config.cellShape
         _cellShading = config.cellShading
+        _setCellSizeMax(config.cellSizeMax, scaled: false)
         _setCellSize(config.cellSize, scaled: false) // Use unscaled in SettingsView
         _update()
     }
@@ -231,5 +232,9 @@ public class CellGridImageView
 
     private func _setCellSize(_ cellSize: Int, scaled: Bool = false) {
         Display.scaler(cellSize, &_cellSize, &_cellSizeUS, scaled: scaled, scaling: _scaling)
+    }
+
+    private func _setCellSizeMax(_ cellSizeMax: Int, scaled: Bool = false) {
+        Display.scaler(cellSizeMax, &_cellSizeMax, &_cellSizeMaxUS, scaled: scaled, scaling: _scaling)
     }
 }

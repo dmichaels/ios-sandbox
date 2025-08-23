@@ -20,7 +20,8 @@ public class Settings: ObservableObject
     }
 
     @Published public var scaling: Bool             = true
-    @Published public var cellSize: Int             = 23
+    @Published public var cellSize: Int             = 13
+    @Published public var cellSizeMax: Int          = 100
     @Published public var cellPadding: Int          = 1
     @Published public var cellFit: CellGridView.Fit = CellGridView.Fit.fixed
     @Published public var cellColor: Colour         = Colour.blue
@@ -31,10 +32,11 @@ public class Settings: ObservableObject
     @Published public var inactiveCellColor: Colour = Colour.green
     @Published public var viewBackground: Colour    = Colour.yellow
 
-    public func fromConfig(config: LifeCellGridImageView.Config)
+    public func fromConfig(_ config: LifeCellGridImageView.Config)
     {
         self.scaling           = config.scaling
         self.cellSize          = config.cellSize
+        self.cellSizeMax       = config.cellSizeMax
         self.cellPadding       = config.cellPadding
         self.cellFit           = config.cellFit
         self.cellColor         = config.cellColor
@@ -45,9 +47,10 @@ public class Settings: ObservableObject
         self.viewBackground    = config.viewBackground
     }
 
-    public func fromConfig(config: LifeCellGridImageView.Config? = nil,
+    public func fromConfig(_ config: LifeCellGridImageView.Config? = nil,
                            scaling: Bool? = nil,
                            cellSize: Int? = nil,
+                           cellSizeMax: Int? = nil,
                            cellPadding: Int? = nil,
                            cellFit: CellGridView.Fit? = nil,
                            cellColor: Colour? = nil,
@@ -62,6 +65,7 @@ public class Settings: ObservableObject
 
             self.scaling           = scaling           ?? c?.scaling           ?? d.scaling
             self.cellSize          = cellSize          ?? c?.cellSize          ?? d.cellSize
+            self.cellSizeMax       = cellSizeMax       ?? c?.cellSizeMax       ?? d.cellSizeMax
             self.cellPadding       = cellPadding       ?? c?.cellPadding       ?? d.cellPadding
             self.cellFit           = cellFit           ?? c?.cellFit           ?? d.cellFit
             self.cellShape         = cellShape         ?? c?.cellShape         ?? d.cellShape
@@ -74,6 +78,7 @@ public class Settings: ObservableObject
     {
         return LifeCellGridImageView.Config(scaling:           self.scaling,
                                             cellSize:          self.cellSize,
+                                            cellSizeMax:       self.cellSizeMax,
                                             cellPadding:       self.cellPadding,
                                             cellFit:           self.cellFit,
                                             cellColor:         self.cellColor,

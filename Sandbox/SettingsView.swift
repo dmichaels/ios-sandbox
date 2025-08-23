@@ -27,7 +27,7 @@ public struct SettingsView: ImageContentView.SettingsViewable {
             }
             VStack {
                 HStack {
-                    IconLabel("Cell Size", "magnifyingglass")
+                    IconLabel("Cell Size (max: \(settings.cellSizeMax))", "magnifyingglass")
                     Text("\(cellSizeDisplay ?? settings.cellSize)").foregroundColor(.secondary)
                 }.padding(.bottom, 4)
                 Slider(

@@ -7,7 +7,7 @@ extension LifeCellGridImageView
     {
         public var activeCellColor: Colour   = Settings.Defaults.activeCellColor
         public var inactiveCellColor: Colour = Settings.Defaults.inactiveCellColor
-        public var viewBackground: Colour    = Colour.yellow
+        public var viewBackground: Colour    = Settings.Defaults.contentView.background // Colour.yellow 
 
         public init(_ lifeCellGridImageView: LifeCellGridImageView) {
             super.init(lifeCellGridImageView)
@@ -17,6 +17,7 @@ extension LifeCellGridImageView
         public init(_ config: Config? = nil,
                     scaling: Bool? = nil,
                     cellSize: Int? = nil,
+                    cellSizeMax: Int? = nil,
                     cellPadding: Int? = nil,
                     cellFit: CellGridView.Fit? = nil,
                     cellColor: Colour? = nil,
@@ -31,6 +32,7 @@ extension LifeCellGridImageView
 
             super.init(scaling:     scaling,
                        cellSize:    cellSize,
+                       cellSizeMax: cellSizeMax,
                        cellPadding: cellPadding,
                        cellFit:     cellFit,
                        cellColor:   cellColor,

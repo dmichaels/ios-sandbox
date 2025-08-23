@@ -79,29 +79,18 @@ public class CellGridImageView
         self.update(config)
     }
 
-    public var config: Config {
-        var config = Config()
-        self.setupConfig(config)
-        return config
-        /*
-        return Config(scaling:     _scaling,
-               cellSize:    _cellSizeUS,
-               cellPadding: _cellPaddingUS,
-               cellFit:     _cellFit,
-               cellColor:   _cellColor,
-               cellShape:   _cellShape,
-               cellShading: _cellShading)
-        */
-    }
-
-    public func setupConfig(_ config: Config) {
-        config.scaling      = _scaling
-        config.cellSize     = _cellSizeUS
-        config.cellPadding  = _cellPaddingUS
-        config.cellFit      = _cellFit
-        config.cellColor    = _cellColor
-        config.cellShape    = _cellShape
-        config.cellShading  = _cellShading
+    internal func setupConfig(_ config: Config) {
+        config.scaling          = _scaling
+        config.cellSize         = _cellSizeUS
+        config.cellSizeMax      = _cellSizeMax
+        config.cellSizeInnerMin = _cellSizeInnerMin
+        config.cellPadding      = _cellPaddingUS
+        config.cellPaddingMax   = _cellPaddingMax
+        config.cellFit          = _cellFit
+        config.cellFitMarginMax = _cellFitMarginMax
+        config.cellColor        = _cellColor
+        config.cellShape        = _cellShape
+        config.cellShading      = _cellShading
     }
 
     public func update(viewSize: CGSize) {

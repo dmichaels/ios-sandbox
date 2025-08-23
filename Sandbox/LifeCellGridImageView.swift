@@ -14,15 +14,9 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
         super.init(settings.config)
     }
 
-    public override var config: Config {
-        let config: LifeCellGridImageView.Config = Config()
-        super.setupConfig(config)
-        return config
-    }
-
-    public override func cellColor(_ location: ViewLocation, primary: Bool = false) -> Colour {
-        return _activeCells.contains(location) ? (primary ? self._activeCellColor : self._inactiveCellColor)
-                                               : super.cellColor(location, primary: primary)
+    internal func setupConfig(_ config: Config) {
+        config.activeCellColor = _activeCellColor
+        config.inactiveCellColor = _inactiveCellColor
     }
 
     public func setupSettings() {
@@ -40,8 +34,8 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
         _settings.cellColor         = super.cellColor
         _settings.cellShape         = super.cellShape
         _settings.cellShading       = super.cellShading
-        _settings.activeCellColor   = self._activeCellColor
-        _settings.inactiveCellColor = self._inactiveCellColor
+        _settings.activeCellColor   = _activeCellColor
+        _settings.inactiveCellColor = _inactiveCellColor
     }
 
     public func applySettings() {
@@ -59,6 +53,11 @@ public class LifeCellGridImageView: CellGridImageView, ImageContentView.ImageVie
         if (notify) {
             _settings.contentView.updateImage()
         }
+    }
+
+    public override func cellColor(_ location: ViewLocation, primary: Bool = false) -> Colour {
+        return _activeCells.contains(location) ? (primary ? self._activeCellColor : self._inactiveCellColor)
+                                               : super.cellColor(location, primary: primary)
     }
 
     public func onTap(_ point: CGPoint) {
